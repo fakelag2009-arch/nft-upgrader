@@ -1,0 +1,611 @@
+/* NFT UPGRADER */
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#07070f'); tg.setBackgroundColor('#07070f'); }
+
+// Ставим аватарку и имя из Telegram
+function initTelegramUser() {
+  if (!tg || !tg.initDataUnsafe?.user) return;
+  const user = tg.initDataUnsafe.user;
+  // Аватарка — Telegram не даёт фото напрямую, используем API через бот
+  // Но можно использовать первую букву имени как fallback
+  const name = user.first_name || 'User';
+  const photoUrl = user.photo_url; // доступно только если бот передал
+  if (photoUrl) {
+    document.getElementById('userAvatar').src = photoUrl;
+  } else {
+    // Генерируем аватарку с именем
+    document.getElementById('userAvatar').src =
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1a3a6e&color=4d9fff&size=80&bold=true&format=svg`;
+  }
+}
+
+const ITEMS = [
+  { id:1,  name:'Plush Heart',       img:'gifts/processed/plush-heart.png',        value:15,    rarity:'common',    desc:'Мягкое сердечко' },
+  { id:2,  name:'Teddy Bear',        img:'gifts/processed/teddy-bear.png',         value:15,    rarity:'common',    desc:'Плюшевый мишка' },
+  { id:3,  name:'Trophy',            img:'gifts/processed/trophy.png',             value:100,   rarity:'common',    desc:'Золотой кубок' },
+  { id:4,  name:'Instant Noodles',   img:'gifts/processed/instant-noodles.png',    value:380,   rarity:'common',    desc:'Лапша' },
+  { id:5,  name:'Ice Cream',         img:'gifts/processed/ice-cream.png',          value:399,   rarity:'common',    desc:'Мороженое' },
+  { id:6,  name:'Statue of Liberty', img:'gifts/processed/statue-of-liberty.png',  value:470,   rarity:'common',    desc:'Статуя' },
+  { id:7,  name:'Lollipop',          img:'gifts/processed/lollipop.png',           value:482,   rarity:'common',    desc:'Леденец' },
+  { id:8,  name:'Backpack',          img:'gifts/processed/durovs-backpack.png',    value:500,   rarity:'uncommon',  desc:'Рюкзак Telegram' },
+  { id:9,  name:'Blue Socks',        img:'gifts/processed/blue-socks.png',         value:529,   rarity:'uncommon',  desc:'Синие носки' },
+  { id:10, name:'Bag of Coins',      img:'gifts/processed/bag-of-coins.png',       value:560,   rarity:'uncommon',  desc:'Мешок монет' },
+  { id:11, name:'Burning Joint',     img:'gifts/processed/burning-joint.png',      value:1349,  rarity:'rare',      desc:'Редкий подарок' },
+  { id:12, name:'Golden Watch',      img:'gifts/processed/golden-watch.png',       value:4879,  rarity:'rare',      desc:'Золотые часы' },
+  { id:13, name:'Sunglasses',        img:'gifts/processed/sunglasses.png',         value:10845, rarity:'legendary', desc:'Легендарные очки' },
+];
+
+const RARITY = {
+  common:    { color:'#78909C', label:'Обычный'     },
+  uncommon:  { color:'#00e676', label:'Необычный'   },
+  rare:      { color:'#4d9fff', label:'Редкий'      },
+  legendary: { color:'#ffd700', label:'Легендарный' },
+};
+
+const FAKE_USERS = ['Aleksey','Maria','Ivan','Dima','Sasha','Kate','Nikita','Anna','Max','Lena','Roma','Vlad'];
+
+const S = {
+  yoursItem:null, wantedItem:null, winChance:0,
+  isSpinning:false, currentModal:null, rarityFilter:'all',
+  shopFilter:'all', buyItem:null,
+  balance:0, inventory:[],
+};
+
+// ── CANVAS ──
+const canvas = document.getElementById('rouletteCanvas');
+const ctx    = canvas.getContext('2d');
+const SZ=280, CR=SZ/2;
+let wheelAngle = 0;
+
+function fmt(v){ return v>=1000?(v/1000).toFixed(v>=10000?0:1)+'k':v+''; }
+function calcChance(a,b){ if(!a||!b) return 0; return Math.min(95,Math.max(1,Math.round((a/b)*100*0.95))); }
+
+// ── INVENTORY ──
+function invCount(id){ const e=S.inventory.find(x=>x.itemId===id); return e?e.count:0; }
+function invAdd(id){
+  const e=S.inventory.find(x=>x.itemId===id);
+  if(e) e.count++; else S.inventory.push({itemId:id,count:1});
+  saveState(); updateInvBadge();
+}
+function invRemove(id){
+  const e=S.inventory.find(x=>x.itemId===id);
+  if(!e||e.count<=0) return false;
+  e.count--;
+  if(e.count===0) S.inventory=S.inventory.filter(x=>x.itemId!==id);
+  saveState(); updateInvBadge(); return true;
+}
+function totalInv(){ return S.inventory.reduce((s,x)=>s+x.count,0); }
+function saveState(){
+  try{
+    localStorage.setItem('nft_inv', JSON.stringify(S.inventory));
+    localStorage.setItem('nft_bal', S.balance);
+  }catch(e){}
+}
+function loadState(){
+  try{
+    const inv=localStorage.getItem('nft_inv');
+    const bal=localStorage.getItem('nft_bal');
+    if(inv) S.inventory=JSON.parse(inv);
+    if(bal) S.balance=parseInt(bal)||0;
+  }catch(e){}
+}
+function updateInvBadge(){
+  const b=document.getElementById('invBadge');
+  const n=totalInv();
+  if(n>0){b.textContent=n;b.style.display='flex';}else b.style.display='none';
+}
+function updateBalance(){ 
+  const el = document.getElementById('userBalance');
+  if(el) el.textContent = fmt(S.balance)+' ⭐'; 
+}
+
+// ── WHEEL ──
+function drawWheel(angle,chance){
+  ctx.clearRect(0,0,SZ,SZ);
+  const cx=CR,cy=CR,r=CR-5;
+  if(chance<=0){
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#10101e';ctx.fill();
+    drawRing(cx,cy,r);return;
+  }
+  const wr=(chance/100)*Math.PI*2,lr=Math.PI*2-wr;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle+wr,angle+Math.PI*2);ctx.closePath();ctx.fillStyle='#2a0f10';ctx.fill();
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,angle+wr);ctx.closePath();ctx.fillStyle='#0a2210';ctx.fill();
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,angle+wr);ctx.closePath();ctx.strokeStyle='rgba(0,230,118,0.35)';ctx.lineWidth=1;ctx.stroke();
+  const line=(a,col)=>{ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();};
+  line(angle,'rgba(0,230,118,0.8)');line(angle+wr,'rgba(255,71,87,0.8)');
+  const rr=r*0.65;
+  const lbl=(a,t,col,sz)=>{ctx.save();ctx.fillStyle=col;ctx.font=`bold ${sz}px -apple-system,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,0.9)';ctx.shadowBlur=6;ctx.fillText(t,cx+rr*Math.cos(a),cy+rr*Math.sin(a));ctx.restore();};
+  if(chance>7) lbl(angle+wr/2,`${chance}%`,'#00e676',Math.min(15,Math.max(10,chance/4)));
+  if(chance<93) lbl(angle+wr+lr/2,`${100-chance}%`,'#ff4757',Math.min(15,Math.max(10,(100-chance)/4)));
+  drawRing(cx,cy,r);
+}
+function drawRing(cx,cy,r){
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=3;ctx.stroke();
+  for(let i=0;i<48;i++){
+    const a=(i/48)*Math.PI*2,maj=i%4===0,len=maj?7:3;
+    ctx.beginPath();ctx.moveTo(cx+(r-1)*Math.cos(a),cy+(r-1)*Math.sin(a));ctx.lineTo(cx+(r-len)*Math.cos(a),cy+(r-len)*Math.sin(a));
+    ctx.strokeStyle=maj?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.04)';ctx.lineWidth=maj?1.5:1;ctx.stroke();
+  }
+}
+
+// ── UPGRADE UI ──
+function updateUI(){
+  renderSlot('slotYours',S.yoursItem,'yours');
+  renderSlot('slotWanted',S.wantedItem,'wanted');
+  S.winChance=(S.yoursItem&&S.wantedItem)?calcChance(S.yoursItem.value,S.wantedItem.value):0;
+  const ct=document.getElementById('centerText'),cp=document.getElementById('centerPercent');
+  const btn=document.getElementById('upgradeBtn'),sub=document.getElementById('upgradeBtnSub');
+  if(!S.yoursItem&&!S.wantedItem){ct.textContent='Выберите предметы';cp.textContent='';}
+  else if(!S.yoursItem){ct.textContent='Ваш предмет';cp.textContent='';}
+  else if(!S.wantedItem){ct.textContent='Желаемый предмет';cp.textContent='';}
+  else{ct.textContent='Шанс победы';cp.textContent=S.winChance+'%';}
+  btn.disabled=!(S.yoursItem&&S.wantedItem&&!S.isSpinning);
+  sub.textContent=`Шанс выигрыша ${S.winChance}%`;
+  drawWheel(wheelAngle,S.winChance);
+}
+
+function renderSlot(id,item,type){
+  const slot=document.getElementById(id);
+  const label=type==='yours'?'Ваш предмет':'Желаемый предмет';
+  if(!item){
+    slot.classList.remove('filled');
+    const ac=type==='yours'?'#555':'#4d9fff',bc=type==='yours'?'#333':'#1a5faa';
+    const d=type==='yours'
+      ?`<path d="M7 8L12 13L17 8" stroke="${ac}" stroke-width="2.5" stroke-linecap="round"/><path d="M7 13L12 18L17 13" stroke="${bc}" stroke-width="2.5" stroke-linecap="round"/>`
+      :`<path d="M7 16L12 11L17 16" stroke="${ac}" stroke-width="2.5" stroke-linecap="round"/><path d="M7 11L12 6L17 11" stroke="${bc}" stroke-width="2.5" stroke-linecap="round"/>`;
+    slot.innerHTML=`<div class="slot-label">${label}</div><div class="slot-arrow"><svg width="28" height="28" viewBox="0 0 24 24" fill="none">${d}</svg></div>`;
+  } else {
+    slot.classList.add('filled');
+    const col=RARITY[item.rarity].color;
+    const cnt=invCount(item.id);
+    slot.innerHTML=`
+      <div class="slot-label">${label}</div>
+      <div class="slot-item">
+        <img class="slot-img" src="${item.img}" alt="${item.name}">
+        <div class="slot-item-name">${item.name}</div>
+        <div class="slot-item-value">${fmt(item.value)} ⭐</div>
+        <div class="slot-rarity-bar" style="background:linear-gradient(90deg,${col}44,${col})"></div>
+        <div style="font-size:9px;color:${cnt>0?'var(--green)':'var(--text3)'}">
+          ${cnt>0?`✓ Из инвентаря ×${cnt}`:RARITY[item.rarity].label}
+        </div>
+      </div>`;
+  }
+  slot.onclick=()=>openItemModal(type);
+}
+
+function resetSlots(){ S.yoursItem=null;S.wantedItem=null;wheelAngle=0;updateUI(); }
+
+// ── ITEM MODAL ──
+function openItemModal(type){
+  if(S.isSpinning) return;
+  S.currentModal=type;
+  document.getElementById('modalTitle').textContent=type==='yours'?'🎯 Ваш предмет':'🏆 Желаемый предмет';
+  document.getElementById('searchInput').value='';
+  S.rarityFilter='all';
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.rtab').classList.add('active');
+  renderGrid();
+  document.getElementById('itemModal').classList.add('open');
+}
+function closeItemModal(){ document.getElementById('itemModal').classList.remove('open');S.currentModal=null; }
+function closeModalOutside(e){ if(e.target===document.getElementById('itemModal')) closeItemModal(); }
+function setRarityFilter(r,btn){ S.rarityFilter=r;document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderGrid(); }
+function filterItems(){ renderGrid(); }
+
+function renderGrid(){
+  const grid=document.getElementById('itemGrid');
+  const q=document.getElementById('searchInput').value.toLowerCase().trim();
+  const sel=S.currentModal==='yours'?S.yoursItem:S.wantedItem;
+  let items=S.currentModal==='yours'?ITEMS.filter(i=>invCount(i.id)>0):[...ITEMS];
+  if(S.rarityFilter!=='all') items=items.filter(i=>i.rarity===S.rarityFilter);
+  if(q) items=items.filter(i=>i.name.toLowerCase().includes(q));
+  if(!items.length){
+    grid.innerHTML=S.currentModal==='yours'
+      ?`<div class="no-items">📦 Инвентарь пуст<br><br>
+         <button onclick="closeItemModal();switchPage('shop')" style="background:linear-gradient(135deg,#1a6fff,#0d47c8);border:none;color:#fff;padding:10px 20px;border-radius:12px;font-weight:700;cursor:pointer;font-size:12px;margin-top:8px">
+           🛍️ В магазин
+         </button></div>`
+      :`<div class="no-items">Ничего не найдено 🔍</div>`;
+    return;
+  }
+  grid.innerHTML=items.map(item=>{
+    const col=RARITY[item.rarity].color;
+    const act=sel&&sel.id===item.id?'selected':'';
+    const cnt=invCount(item.id);
+    return `<div class="item-card ${act}" onclick="selectItem(${item.id})">
+      <img class="item-card-img" src="${item.img}" alt="${item.name}">
+      <div class="item-card-name">${item.name}</div>
+      <div class="item-card-value">${fmt(item.value)} ⭐</div>
+      <div class="item-rarity-bar" style="background:linear-gradient(90deg,${col}44,${col})"></div>
+      ${cnt>0?`<div style="font-size:9px;color:var(--green)">×${cnt} в инвентаре</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function selectItem(id){
+  const item=ITEMS.find(i=>i.id===id);if(!item) return;
+  if(S.currentModal==='yours'){S.yoursItem=item;if(S.wantedItem?.id===item.id)S.wantedItem=null;}
+  else S.wantedItem=item;
+  closeItemModal();updateUI();
+  tg?.HapticFeedback?.selectionChanged();
+}
+
+// ── SHOP ──
+function setShopTab(r,btn){
+  S.shopFilter=r;
+  document.querySelectorAll('.shop-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderShop();
+}
+
+function renderShop(){
+  const grid=document.getElementById('shopGrid');
+  let items=[...ITEMS];
+  if(S.shopFilter!=='all') items=items.filter(i=>i.rarity===S.shopFilter);
+  grid.innerHTML=items.map(item=>{
+    const col=RARITY[item.rarity].color;
+    const bg=RARITY[item.rarity].bg||col+'22';
+    const cnt=invCount(item.id);
+    return `<div class="shop-card" onclick="openBuyModal(${item.id})">
+      <div class="shop-card-rarity" style="background:${bg};color:${col}">${RARITY[item.rarity].label}</div>
+      ${cnt>0?`<div class="shop-card-owned">×${cnt}</div>`:''}
+      <img class="shop-card-img" src="${item.img}" alt="${item.name}">
+      <div class="shop-card-name">${item.name}</div>
+      <div class="shop-card-desc">${item.desc}</div>
+      <div class="shop-card-price"><span style="font-size:18px">⭐</span>${fmt(item.value)}</div>
+      <button class="shop-buy-btn" onclick="event.stopPropagation();openBuyModal(${item.id})">
+        Купить за ${fmt(item.value)} ⭐
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ── BUY MODAL ──
+function openBuyModal(id){
+  const item=ITEMS.find(i=>i.id===id);if(!item) return;
+  S.buyItem=item;
+  const col=RARITY[item.rarity].color;
+  document.getElementById('buyModalBody').innerHTML=`
+    <img class="buy-modal-img" src="${item.img}" alt="${item.name}">
+    <div class="buy-modal-name">${item.name}</div>
+    <div style="font-size:11px;color:${col};font-weight:700;letter-spacing:1px">${RARITY[item.rarity].label}</div>
+    <div class="buy-modal-desc">${item.desc}</div>
+    <div class="buy-modal-price">⭐ ${item.value.toLocaleString()}</div>
+    <div style="font-size:11px;color:var(--text3);text-align:center">
+      Твой баланс: <span style="color:var(--gold);font-weight:700">${S.balance.toLocaleString()} ⭐</span>
+    </div>
+    <div class="buy-modal-actions">
+      <button class="buy-cancel-btn" onclick="closeBuyModal()">Отмена</button>
+      <button class="buy-confirm-btn" onclick="confirmBuy(${item.id})">
+        ⭐ Купить
+      </button>
+    </div>`;
+  document.getElementById('buyModal').classList.add('open');
+  tg?.HapticFeedback?.impactOccurred('light');
+}
+
+function closeBuyModal(){ document.getElementById('buyModal').classList.remove('open');S.buyItem=null; }
+function closeBuyModalOutside(e){ if(e.target===document.getElementById('buyModal')) closeBuyModal(); }
+
+function confirmBuy(id){
+  const item=ITEMS.find(i=>i.id===id);if(!item) return;
+
+  // Если в Telegram — запускаем Stars invoice через бот
+  if(tg&&tg.initData){
+    closeBuyModal();
+    // Отправляем данные боту — бот выставит счёт
+    tg.sendData(JSON.stringify({ action:'buy', itemId:item.id, itemName:item.name, price:item.value }));
+    showToast(`⭐ Счёт на ${item.value} Stars отправлен боту!`);
+    return;
+  }
+
+  // Локальная демо-покупка (без Telegram)
+  if(S.balance < item.value){
+    showToast('❌ Недостаточно Stars! Пополни баланс.');
+    closeBuyModal(); return;
+  }
+  S.balance -= item.value;
+  invAdd(item.id);
+  updateBalance();
+  renderShop();
+  renderInventory();
+  closeBuyModal();
+  showBuySuccess(item);
+  tg?.HapticFeedback?.notificationOccurred('success');
+}
+
+// Вызывается из бота после успешной оплаты
+function onPurchaseSuccess(itemId){
+  const item=ITEMS.find(i=>i.id===itemId);if(!item) return;
+  invAdd(itemId);
+  renderShop();
+  renderInventory();
+  showBuySuccess(item);
+}
+
+function showBuySuccess(item){
+  const col=RARITY[item.rarity].color;
+  showToast(`✅ ${item.name} добавлен в инвентарь!`, col);
+}
+
+// ── INVENTORY ──
+function renderInventory(){
+  const grid=document.getElementById('invGrid');
+  const empty=document.getElementById('invEmpty');
+  if(S.inventory.length===0){
+    empty.style.display='flex';
+    grid.style.display='none';
+    return;
+  }
+  empty.style.display='none';
+  grid.style.display='grid';
+  grid.innerHTML=S.inventory.map(e=>{
+    const item=ITEMS.find(i=>i.id===e.itemId);if(!item) return '';
+    const col=RARITY[item.rarity].color;
+    const isYours=S.yoursItem&&S.yoursItem.id===item.id;
+    return `<div class="inv-card">
+      ${e.count>1?`<div class="inv-card-count">×${e.count}</div>`:''}
+      <img class="inv-card-img" src="${item.img}" alt="${item.name}">
+      <div class="inv-card-name">${item.name}</div>
+      <div class="inv-card-value">${fmt(item.value)} ⭐</div>
+      <div class="inv-card-rarity" style="background:linear-gradient(90deg,${col}44,${col})"></div>
+      <button class="inv-use-btn ${isYours?'used':''}" onclick="useFromInventory(${item.id})">
+        ${isYours?'✓ Выбрано':'⬆ Поставить'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function useFromInventory(id){
+  const item=ITEMS.find(i=>i.id===id);if(!item) return;
+  S.yoursItem=item;
+  updateUI();
+  renderInventory();
+  switchPage('upgrade');
+  tg?.HapticFeedback?.selectionChanged();
+  showToast(`⬆ ${item.name} выбран для апгрейда`);
+}
+
+// ── TOAST ──
+function showToast(msg, color){
+  let t=document.getElementById('toast');
+  if(!t){ t=document.createElement('div'); t.id='toast'; t.style.cssText=`position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,20,35,0.95);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:20px;z-index:9999;transition:all 0.3s;opacity:0;backdrop-filter:blur(10px);white-space:nowrap;max-width:90vw;text-align:center`; document.body.appendChild(t); }
+  t.textContent=msg;
+  if(color) t.style.borderColor=color+'55';
+  t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; },2500);
+}
+
+// ── SPIN ──
+function startUpgrade(){
+  if(S.isSpinning||!S.yoursItem||!S.wantedItem) return;
+
+  // Проверяем что предмет есть в инвентаре
+  if(invCount(S.yoursItem.id)===0){
+    showToast('❌ Этого предмета нет в инвентаре!');
+    return;
+  }
+
+  S.isSpinning=true;
+  const btn=document.getElementById('upgradeBtn');
+  btn.disabled=true;btn.classList.add('spinning-btn');
+  document.getElementById('rouletteRing').classList.add('spinning');
+  tg?.HapticFeedback?.impactOccurred('medium');
+
+  const chance=S.winChance;
+  const didWin=Math.random()*100<chance;
+  const wr=(chance/100)*Math.PI*2;
+  const TOP=-Math.PI/2;
+  let land;
+  if(didWin) land=wr*0.08+Math.random()*wr*0.84;
+  else{ const lr=Math.PI*2-wr; land=wr+lr*0.08+Math.random()*lr*0.84; }
+  const spins=6+Math.floor(Math.random()*4);
+  const target=TOP-land+spins*Math.PI*2;
+  const start=wheelAngle,dur=3800+Math.random()*1400,t0=performance.now();
+  const ease=t=>1-Math.pow(1-t,3.5);
+  let done=false;
+  requestAnimationFrame(function loop(now){
+    const prog=Math.min((now-t0)/dur,1);
+    wheelAngle=start+(target-start)*ease(prog);
+    drawWheel(wheelAngle,chance);
+    if(prog<1){ requestAnimationFrame(loop); }
+    else if(!done){ done=true; wheelAngle=((target%(Math.PI*2))+Math.PI*2)%(Math.PI*2); drawWheel(wheelAngle,chance); finishSpin(didWin); }
+  });
+}
+
+function finishSpin(didWin){
+  S.isSpinning=false;
+  const btn=document.getElementById('upgradeBtn');
+  btn.classList.remove('spinning-btn');
+  document.getElementById('rouletteRing').classList.remove('spinning');
+  tg?.HapticFeedback?.notificationOccurred(didWin?'success':'error');
+
+  if(didWin){
+    // Убираем ставку из инвентаря, добавляем выигрыш
+    invRemove(S.yoursItem.id);
+    invAdd(S.wantedItem.id);
+  } else {
+    // Проигрыш — убираем ставку
+    invRemove(S.yoursItem.id);
+  }
+  renderInventory();
+  addLiveFeedCard(didWin,S.yoursItem,S.wantedItem);
+  setTimeout(()=>showResult(didWin),350);
+}
+
+// ── RESULT ──
+function showResult(didWin){
+  const prize=S.wantedItem,bet=S.yoursItem;
+  document.getElementById('resultGlow').className=`result-glow ${didWin?'win':'lose'}`;
+  document.getElementById('resultIcon').innerHTML=didWin
+    ?`<img src="${prize.img}" style="width:84px;height:84px;object-fit:contain">`
+    :`<span style="font-size:60px">💨</span>`;
+  document.getElementById('resultTitle').textContent=didWin?'ПОБЕДА!':'ПРОИГРЫШ';
+  document.getElementById('resultTitle').className=`result-title ${didWin?'win':'lose'}`;
+  document.getElementById('resultSubtitle').textContent=didWin?`Вы получили ${prize.name}!`:`${bet.name} потерян`;
+  const shown=didWin?prize:bet;
+  document.getElementById('resultItemCard').innerHTML=`
+    <img class="result-item-img" src="${shown.img}" alt="${shown.name}">
+    <div class="result-item-name">${shown.name}</div>
+    <div class="result-item-val">${fmt(shown.value)} ⭐</div>`;
+  if(didWin) spawnParticles();
+  document.getElementById('resultOverlay').classList.add('open');
+}
+
+function spawnParticles(){
+  const box=document.getElementById('resultParticles');box.innerHTML='';
+  ['#00e676','#ffd700','#4d9fff','#ff4757','#ab47bc'].forEach(col=>{
+    for(let j=0;j<5;j++){
+      const p=document.createElement('div');p.className='particle';
+      p.style.cssText=`left:${35+Math.random()*30}%;top:${35+Math.random()*30}%;background:${col};--tx:${(Math.random()-.5)*200}px;--ty:${-(Math.random()*220+80)}px;animation-delay:${Math.random()*0.3}s;animation-duration:${0.9+Math.random()*0.5}s`;
+      box.appendChild(p);
+    }
+  });
+}
+
+function closeResult(){
+  document.getElementById('resultOverlay').classList.remove('open');
+  S.yoursItem=null;S.wantedItem=null;S.winChance=0;wheelAngle=0;
+  updateUI();
+}
+
+// ── LIVE FEED ──
+const FEED_PAIRS=[
+  {bet:0,prize:2},{bet:1,prize:3},{bet:2,prize:4},{bet:3,prize:5},
+  {bet:4,prize:6},{bet:5,prize:7},{bet:6,prize:8},{bet:7,prize:9},
+  {bet:8,prize:10},{bet:9,prize:11},{bet:10,prize:12},
+  {bet:0,prize:5},{bet:1,prize:6},{bet:2,prize:7},{bet:3,prize:8},
+  {bet:0,prize:10},{bet:1,prize:11},{bet:2,prize:12},
+];
+function timeAgo(s){ return s<60?`${s} сек назад`:`${Math.floor(s/60)} мин назад`; }
+
+function makeFeedCard(win,shown,bet,prize,user,time){
+  const mult=(prize.value/bet.value).toFixed(1);
+  const card=document.createElement('div');
+  card.className=`feed-card ${win?'feed-win':'feed-lose'} feed-new`;
+  card.innerHTML=`
+    <div class="feed-status ${win?'win':'lose'}">${win?'ВЫИГРЫШ':'ПРОИГРЫШ'}</div>
+    <div class="feed-mult">${mult}x</div>
+    <div class="feed-img"><img src="${shown.img}" alt="${shown.name}"></div>
+    <div class="feed-name">${shown.name}</div>
+    <div class="feed-time">${user} · ${time}</div>
+    <div class="feed-values">${fmt(bet.value)} → ${fmt(prize.value)} <span class="fv-gold">⭐</span></div>`;
+  return card;
+}
+
+function addLiveFeedCard(win,bet,prize){
+  const track=document.getElementById('feedTrack');
+  const shown=win?prize:bet;
+  const user=FAKE_USERS[Math.floor(Math.random()*FAKE_USERS.length)];
+  const card=makeFeedCard(win,shown,bet,prize,user,'только что');
+  track.prepend(card);
+  while(track.children.length>14) track.removeChild(track.lastChild);
+}
+
+function spawnFeedCard(){
+  const pair=FEED_PAIRS[Math.floor(Math.random()*FEED_PAIRS.length)];
+  const bet=ITEMS[pair.bet],prize=ITEMS[pair.prize];
+  if(!bet||!prize||bet.value>=prize.value) return;
+  const chance=calcChance(bet.value,prize.value);
+  const win=Math.random()*100<chance;
+  const shown=win?prize:bet;
+  const user=FAKE_USERS[Math.floor(Math.random()*FAKE_USERS.length)];
+  const sec=Math.floor(Math.random()*55)+2;
+  const card=makeFeedCard(win,shown,bet,prize,user,timeAgo(sec));
+  document.getElementById('feedTrack').prepend(card);
+  const t=document.getElementById('feedTrack');
+  while(t.children.length>14) t.removeChild(t.lastChild);
+}
+
+function startLiveFeed(){
+  for(let i=0;i<7;i++) setTimeout(spawnFeedCard,i*120);
+  (function sched(){ setTimeout(()=>{spawnFeedCard();sched();},3500+Math.random()*4500); })();
+}
+
+// ── PAGE SWITCH ──
+function switchPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const pg=document.getElementById('page-'+name);
+  const nb=document.getElementById('nav-'+name);
+  if(pg) pg.classList.add('active');
+  if(nb) nb.classList.add('active');
+  if(name==='shop') renderShop();
+  if(name==='inventory') renderInventory();
+}
+
+function showTopup(){
+  tg?.HapticFeedback?.impactOccurred('light');
+  setAmt(100);
+  document.getElementById('topupModal').classList.add('open');
+}
+function closeTopup(){ document.getElementById('topupModal').classList.remove('open'); }
+function closeTopupOutside(e){ if(e.target===document.getElementById('topupModal')) closeTopup(); }
+
+function setAmt(n){
+  n = Math.max(1, parseInt(n)||1);
+  document.getElementById('topupInput').value = n;
+  document.getElementById('topupDisplay').textContent = n;
+  document.getElementById('topupPayLabel').textContent = n + ' ⭐';
+  document.querySelectorAll('.topup-chip').forEach(b=>{
+    b.classList.toggle('active', parseInt(b.textContent)===n);
+  });
+  tg?.HapticFeedback?.selectionChanged();
+}
+
+function onTopupInput(val){
+  const n = Math.max(1, parseInt(val)||1);
+  document.getElementById('topupDisplay').textContent = isNaN(parseInt(val)) ? '?' : n;
+  document.getElementById('topupPayLabel').textContent = (isNaN(parseInt(val)) ? 1 : n) + ' ⭐';
+  document.querySelectorAll('.topup-chip').forEach(b=>{
+    b.classList.toggle('active', parseInt(b.textContent)===n);
+  });
+}
+
+function confirmTopup(){
+  const n = Math.max(1, parseInt(document.getElementById('topupInput').value)||1);
+  buyStars(n);
+}
+
+function buyStars(amount){
+  amount = Math.max(1, parseInt(amount)||1);
+  closeTopup();
+  tg?.HapticFeedback?.impactOccurred('medium');
+  if(tg && tg.initData){
+    tg.sendData(JSON.stringify({ action:'topup', amount }));
+    showToast(`⭐ Запрос на ${amount} Stars отправлен...`);
+    return;
+  }
+  // Демо режим
+  S.balance += amount;
+  saveState(); updateBalance();
+  showToast(`✅ +${amount} ⭐ добавлено!`, '#ffd700');
+}
+
+// ── DEMO: добавить стартовые Stars ──
+function addDemoBalance(amount){
+  S.balance+=amount;
+  saveState();
+  updateBalance();
+  showToast(`+${amount} ⭐ добавлено на баланс!`,'#ffd700');
+}
+
+// ── INIT ──
+loadState();
+drawWheel(0,0);
+updateUI();
+updateBalance();
+updateInvBadge();
+renderShop();
+startLiveFeed();
+initTelegramUser();
+
+// Слушаем сообщения от бота (после оплаты Stars)
+window.addEventListener('message', (e)=>{
+  try{
+    const d=JSON.parse(e.data);
+    if(d.type==='purchase_success') onPurchaseSuccess(d.itemId);
+    if(d.type==='balance_update'){ S.balance=d.balance; saveState(); updateBalance(); }
+  }catch(ex){}
+});
