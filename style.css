@@ -388,3 +388,46 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ── HOME PROMO BUTTON ── */
+.home-promo-btn {
+  background: linear-gradient(135deg, #1a0a2e 0%, #0d0520 60%, #080310 100%);
+  border: 1.5px solid rgba(170,0,255,0.4);
+  box-shadow: 0 4px 24px rgba(170,0,255,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+  min-height: 80px;
+  position: relative;
+  overflow: hidden;
+}
+.home-promo-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 0% 50%, rgba(170,0,255,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.home-promo-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  animation: promoShineHome 3s ease-in-out infinite;
+}
+@keyframes promoShineHome {
+  0% { left: -100%; }
+  50%, 100% { left: 150%; }
+}
+.home-promo-btn .home-btn-title {
+  color: #cc44ff;
+  text-shadow: 0 0 12px rgba(170,0,255,0.6);
+}
+.home-promo-btn .home-btn-sub { color: rgba(255,255,255,0.4); }
+.home-promo-icon {
+  font-size: 44px;
+  line-height: 1;
+  filter: drop-shadow(0 0 10px rgba(170,0,255,0.7));
+  animation: promoIconPulse 2s ease-in-out infinite;
+}
+@keyframes promoIconPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 10px rgba(170,0,255,0.7)); }
+  50% { transform: scale(1.1) rotate(-5deg); filter: drop-shadow(0 0 18px rgba(200,100,255,1)); }
+}
