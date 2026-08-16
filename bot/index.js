@@ -7,177 +7,306 @@ const TOKEN      = process.env.BOT_TOKEN  || '8391766294:AAH0HhI-mHBBXdCrv8D-ViK
 const WEBAPP_URL = process.env.WEBAPP_URL || 'https://panelitachi1-lang.github.io/nft-upgrader';
 const PORT       = process.env.PORT       || 3001;
 
-const bot = new TelegramBot(TOKEN, { polling: true });
+// ── ADMINS — добавь свой Telegram ID (узнать: написать @userinfobot) ──
+const ADMINS = [process.env.ADMIN_ID ? parseInt(process.env.ADMIN_ID) : 0];
+
+// ── ITEMS ──
+const ITEMS = [
+  { id:1,  name:'Plush Heart',       value:15,    emoji:'🫀' },
+  { id:2,  name:'Teddy Bear',        value:15,    emoji:'🐻' },
+  { id:3,  name:'Homemade Cake',     value:50,    emoji:'🎂' },
+  { id:4,  name:'Trophy',            value:100,   emoji:'🏆' },
+  { id:5,  name:'Instant Noodles',   value:380,   emoji:'🍜' },
+  { id:6,  name:'Ice Cream',         value:399,   emoji:'🍦' },
+  { id:7,  name:'Statue of Liberty', value:470,   emoji:'🗽' },
+  { id:8,  name:'Lollipop',          value:482,   emoji:'🍭' },
+  { id:9,  name:'Backpack',          value:500,   emoji:'🎒' },
+  { id:10, name:'Blue Socks',        value:529,   emoji:'🧦' },
+  { id:11, name:'Bag of Coins',      value:560,   emoji:'💰' },
+  { id:12, name:'Burning Joint',     value:1349,  emoji:'🔥' },
+  { id:13, name:'Golden Watch',      value:4879,  emoji:'⌚' },
+  { id:14, name:'Sunglasses',        value:10845, emoji:'🕶' },
+];
+
+function fmtVal(v){ return v>=1000?(v/1000).toFixed(0)+'k':String(v); }
+
+// ── ХРАНИЛИЩЕ (память, можно заменить на БД) ──
+const userInventories = {}; // { userId: [{itemId, count}] }
+const userBalances    = {}; // { userId: stars }
+const pendingAddNft   = {}; // { adminChatId: { targetUsername, targetUserId } }
+
+function getInv(userId){
+  if(!userInventories[userId]) userInventories[userId]=[];
+  return userInventories[userId];
+}
+function addToInv(userId, itemId){
+  const inv=getInv(userId);
+  const e=inv.find(x=>x.itemId===itemId);
+  if(e) e.count++; else inv.push({itemId,count:1});
+}
+function isAdmin(userId){ return ADMINS.includes(userId) || ADMINS[0]===0; }
+
+const bot = new TelegramBot(TOKEN, { polling:true });
 const app = express();
-app.use(cors({ origin: '*' }));
+app.use(cors({origin:'*'}));
 app.use(express.json());
 
-// ── SSE клиенты для реальной ленты ──
-const sseClients = new Set();
+// ── Аватарки пользователей ──
+const userPhotos = {}; // { userId: photoUrl }
 
-function broadcastFeed(event) {
-  const data = `data: ${JSON.stringify(event)}\n\n`;
-  sseClients.forEach(res => {
-    try { res.write(data); } catch(e) { sseClients.delete(res); }
-  });
+async function fetchUserPhoto(userId) {
+  if (userPhotos[userId]) return userPhotos[userId];
+  try {
+    const photos = await bot.getUserProfilePhotos(userId, { limit: 1 });
+    if (photos.total_count > 0) {
+      const fileId = photos.photos[0][0].file_id;
+      const file   = await bot.getFile(fileId);
+      const url    = `https://api.telegram.org/file/bot${TOKEN}/${file.file_path}`;
+      userPhotos[userId] = url;
+      return url;
+    }
+  } catch(e) {}
+  return null;
 }
 
-// ── SSE endpoint ──
-app.get('/feed', (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+// API для фронта — получить фото пользователя
+app.get('/photo/:userId', async (req, res) => {
+  const url = await fetchUserPhoto(parseInt(req.params.userId));
+  if (url) res.json({ url });
+  else res.json({ url: null });
+});
+const sseClients = new Set();
+function broadcast(event){
+  const d=`data: ${JSON.stringify(event)}\n\n`;
+  sseClients.forEach(r=>{ try{r.write(d);}catch(e){sseClients.delete(r);} });
+}
+app.get('/feed',(req,res)=>{
+  res.setHeader('Content-Type','text/event-stream');
+  res.setHeader('Cache-Control','no-cache');
+  res.setHeader('Connection','keep-alive');
+  res.setHeader('Access-Control-Allow-Origin','*');
   res.flushHeaders();
   res.write('data: {"type":"connected"}\n\n');
   sseClients.add(res);
-  req.on('close', () => sseClients.delete(res));
+  req.on('close',()=>sseClients.delete(res));
 });
 
+// ── Хранилище пользователей (username → userId) ──
+const knownUsers = {}; // { username: userId }
+
 // ── /start ──
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  const name   = msg.from.first_name || 'друг';
+bot.onText(/\/start/,(msg)=>{
+  const chatId=msg.chat.id, name=msg.from.first_name||'друг';
+  // Запоминаем пользователя
+  if(msg.from.username) knownUsers[msg.from.username.toLowerCase()] = chatId;
+  knownUsers[chatId] = chatId;
+  
   bot.sendMessage(chatId,
-    `👋 Привет, *${name}*\\!\n\n🎰 *NFT Upgrader* — апгрейди свои подарки\\!\n\nПоставь предмет и попробуй выиграть что\\-то дороже\\.`,
-    {
-      parse_mode: 'MarkdownV2',
-      reply_markup: {
-        inline_keyboard: [[
-          { text: '🎮 Открыть Апгрейдер', web_app: { url: WEBAPP_URL } }
-        ],[
-          { text: '⭐ Пополнить баланс', callback_data: 'topup' },
-          { text: '📊 Мой профиль',      callback_data: 'profile' }
-        ]]
-      }
+    `👋 Привет, *${name}*!\n\n🎰 *NFT Upgrader* — апгрейди свои подарки!\n\nКупи предмет в магазине и попробуй выиграть что-то дороже.`,
+    { parse_mode:'Markdown',
+      reply_markup:{inline_keyboard:[[
+        {text:'🎮 Открыть апгрейдер', web_app:{url:WEBAPP_URL}}
+      ],[
+        {text:'⭐ Пополнить баланс', callback_data:'topup'},
+      ]]}
     }
   );
 });
 
 // ── /upgrade ──
-bot.onText(/\/upgrade/, (msg) => {
-  bot.sendMessage(msg.chat.id, '🎰 Открыть апгрейдер:', {
-    reply_markup: {
-      inline_keyboard: [[{ text: '⬆ Апгрейдер', web_app: { url: WEBAPP_URL } }]]
-    }
+bot.onText(/\/upgrade/,(msg)=>{
+  bot.sendMessage(msg.chat.id,'🎰 Открыть апгрейдер:',{
+    reply_markup:{inline_keyboard:[[{text:'⬆ Апгрейдер',web_app:{url:WEBAPP_URL}}]]}
   });
 });
 
-// ── Callback ──
-bot.on('callback_query', async (query) => {
-  const chatId = query.message.chat.id;
-  const data   = query.data;
-  if (data === 'topup') {
-    await bot.sendInvoice(chatId,'⭐ Пополнение баланса','Выбери сумму в апгрейдере','topup_manual_'+Date.now(),'','XTR',[{label:'Stars на баланс',amount:100}]);
+// ── /addnft @username ──
+bot.onText(/\/addnft(?:\s+(@\S+))?/,async(msg,match)=>{
+  const adminId=msg.from.id, chatId=msg.chat.id;
+  if(!isAdmin(adminId)){
+    bot.sendMessage(chatId,'❌ У вас нет прав администратора.');
+    return;
   }
-  if (data === 'profile') {
-    bot.sendMessage(chatId,'👤 *Профиль*\n\n⭐ Баланс: см\\. в приложении',{parse_mode:'MarkdownV2'});
-  }
-  bot.answerCallbackQuery(query.id);
-});
-
-// ── Pre-checkout ──
-bot.on('pre_checkout_query', (q) => bot.answerPreCheckoutQuery(q.id, true));
-
-// ── Успешная оплата ──
-bot.on('message', (msg) => {
-  if (!msg.successful_payment) return;
-  const stars   = msg.successful_payment.total_amount;
-  const chatId  = msg.chat.id;
-  const payload = msg.successful_payment.invoice_payload;
-
-  if (payload.startsWith('topup_')) {
-    // Отправляем событие фронту через SSE
-    broadcastFeed({ type: 'balance_add', userId: chatId, stars });
-
-    bot.sendMessage(chatId,
-      `✅ *Баланс пополнен\\!*\n\n⭐ *\\+${stars} Stars* зачислено на баланс\\!\n\nОткройте апгрейдер и играйте 🎰`,
-      {
-        parse_mode: 'MarkdownV2',
-        reply_markup: { inline_keyboard: [[{ text: '🎰 Открыть апгрейдер', web_app: { url: WEBAPP_URL } }]] }
-      }
-    );
-    console.log(`💰 Topup: user=${chatId} stars=${stars}`);
+  const username=match[1];
+  if(!username){
+    bot.sendMessage(chatId,'⚠️ Использование: /addnft @username\n\nПример: /addnft @durov');
     return;
   }
 
-  const match    = payload.match(/buy_item_(\d+)_/);
-  const itemId   = match ? parseInt(match[1]) : null;
-  const IMAP     = {1:'Plush Heart',2:'Teddy Bear',3:'Trophy',4:'Instant Noodles',5:'Ice Cream',6:'Statue of Liberty',7:'Lollipop',8:'Backpack',9:'Blue Socks',10:'Bag of Coins',11:'Burning Joint',12:'Golden Watch',13:'Sunglasses'};
-  const itemName = itemId ? IMAP[itemId] : 'подарок';
+  // Сохраняем цель
+  pendingAddNft[chatId]={ targetUsername:username, targetUserId:null };
 
-  broadcastFeed({ type: 'purchase', userId: chatId, itemId, itemName, stars });
+  // Показываем список подарков кнопками (по 2 в ряд)
+  const rows=[];
+  for(let i=0;i<ITEMS.length;i+=2){
+    const row=[];
+    const a=ITEMS[i];
+    row.push({text:`${a.emoji} ${a.name} — ${fmtVal(a.value)}⭐`, callback_data:`addnft_${a.id}_${username}`});
+    if(ITEMS[i+1]){
+      const b=ITEMS[i+1];
+      row.push({text:`${b.emoji} ${b.name} — ${fmtVal(b.value)}⭐`, callback_data:`addnft_${b.id}_${username}`});
+    }
+    rows.push(row);
+  }
+  rows.push([{text:'❌ Отмена', callback_data:'addnft_cancel'}]);
 
   bot.sendMessage(chatId,
-    `✅ *Покупка успешна\\!*\n\n🎁 *${itemName}* добавлен в инвентарь\\!\n⭐ Списано: *${stars} Stars*`,
-    {
-      parse_mode: 'MarkdownV2',
-      reply_markup: { inline_keyboard: [[{ text: '🎰 Открыть апгрейдер', web_app: { url: WEBAPP_URL } }]] }
-    }
+    `🎁 Выдать подарок для *${username}*\n\nВыбери предмет:`,
+    { parse_mode:'Markdown', reply_markup:{inline_keyboard:rows} }
   );
-  console.log(`✅ Purchase: user=${chatId} item=${itemId} stars=${stars}`);
 });
 
-// ── WebApp данные от фронта ──
-bot.on('message', (msg) => {
-  if (!msg.web_app_data) return;
-  try {
-    const data   = JSON.parse(msg.web_app_data.data);
-    const chatId = msg.chat.id;
+// ── /myid — чтобы узнать свой Telegram ID ──
+bot.onText(/\/myid/,(msg)=>{
+  bot.sendMessage(msg.chat.id,`🆔 Твой Telegram ID: \`${msg.from.id}\`\n\nДобавь его в ADMINS в боте.`,{parse_mode:'Markdown'});
+});
 
-    // Пополнение
-    if (data.action === 'topup') {
-      const amount = Math.max(1, parseInt(data.amount) || 1);
-      bot.sendInvoice(chatId,
-        `⭐ Пополнение баланса`,
-        `Пополнение NFT Upgrader на ${amount} Stars. Зачислится мгновенно!`,
-        `topup_${amount}_${Date.now()}`,
-        '', 'XTR',
-        [{ label: `${amount} Stars на баланс`, amount }]
+// ── Callback кнопки ──
+bot.on('callback_query',async(query)=>{
+  const chatId=query.message.chat.id, adminId=query.from.id;
+  const data=query.data;
+  bot.answerCallbackQuery(query.id);
+
+  // Отмена addnft
+  if(data==='addnft_cancel'){
+    delete pendingAddNft[chatId];
+    bot.editMessageText('❌ Отменено.',{chat_id:chatId, message_id:query.message.message_id});
+    return;
+  }
+
+  // Выдача подарка: addnft_{itemId}_{username}
+  if(data.startsWith('addnft_')){
+    if(!isAdmin(adminId)){ return; }
+    const parts=data.split('_');
+    const itemId=parseInt(parts[1]);
+    const username=parts.slice(2).join('_');
+    const item=ITEMS.find(i=>i.id===itemId);
+    if(!item) return;
+
+    // Ищем userId — сначала в knownUsers, потом через getChat
+    try{
+      const cleanUsername = username.replace('@','').toLowerCase();
+      let targetId = knownUsers[cleanUsername];
+      
+      if(!targetId){
+        // Пробуем через getChat
+        try{
+          const targetChat = await bot.getChat(username);
+          targetId = targetChat.id;
+          if(targetChat.username) knownUsers[targetChat.username.toLowerCase()] = targetId;
+        } catch(e){
+          bot.editMessageText(
+            `❌ Пользователь *${username}* не найден.\n\nПопроси его написать /start боту — тогда смогу его найти.`,
+            {chat_id:chatId, message_id:query.message.message_id, parse_mode:'Markdown'}
+          );
+          return;
+        }
+      }
+
+      // Добавляем в инвентарь
+      addToInv(targetId, itemId);
+
+      // Уведомляем админа
+      bot.editMessageText(
+        `✅ *${item.emoji} ${item.name}* выдан пользователю *${username}*!\n\n💎 Стоимость: ${item.value.toLocaleString()} ⭐`,
+        {chat_id:chatId, message_id:query.message.message_id, parse_mode:'Markdown'}
+      );
+
+      // Уведомляем пользователя
+      try {
+        const giftUrl = `${WEBAPP_URL}?gift=${itemId}`;
+        bot.sendMessage(targetId,
+          `🎁 *Вам выдан подарок!*\n\n${item.emoji} *${item.name}*\n💎 Стоимость: ${item.value.toLocaleString()} ⭐\n\nНажми кнопку чтобы получить предмет в инвентарь!`,
+          { parse_mode:'Markdown',
+            reply_markup:{inline_keyboard:[[{text:'🎁 Получить подарок!', web_app:{url:giftUrl}}]]}
+          }
+        );
+      } catch(e){}
+
+      broadcast({type:'gift_received', userId:targetId, itemId});
+      console.log(`🎁 Gift: ${item.name} → ${username} (${targetId})`);
+
+    } catch(e){
+      bot.editMessageText(
+        `❌ Пользователь *${username}* не найден или не писал боту.\n\nПопроси его написать /start боту сначала.`,
+        {chat_id:chatId, message_id:query.message.message_id, parse_mode:'Markdown'}
       );
     }
+    return;
+  }
 
-    // Покупка предмета
-    if (data.action === 'buy') {
-      bot.sendInvoice(chatId,
-        `🎁 ${data.itemName}`,
-        `Покупка NFT подарка "${data.itemName}" для апгрейдера!`,
-        `buy_item_${data.itemId}_${Date.now()}`,
-        '', 'XTR',
-        [{ label: data.itemName, amount: data.price }]
-      );
-    }
+  // Пополнение баланса
+  if(data==='topup'){
+    await bot.sendInvoice(chatId,'⭐ Пополнение баланса','Пополни баланс NFT Upgrader!',`topup_100_${Date.now()}`,'','XTR',[{label:'100 Stars на баланс',amount:100}]);
+  }
+});
 
-    // Результат апгрейда — рассылаем всем в ленту
-    if (data.action === 'upgrade_result') {
-      broadcastFeed({
-        type:      'upgrade',
-        win:       data.win,
-        betName:   data.betName,
-        betImg:    data.betImg,
-        betVal:    data.betVal,
-        prizeName: data.prizeName,
-        prizeImg:  data.prizeImg,
-        prizeVal:  data.prizeVal,
-        user:      msg.from.first_name || 'Игрок',
-        ts:        Date.now()
-      });
+// ── Pre-checkout ──
+bot.on('pre_checkout_query',(q)=>bot.answerPreCheckoutQuery(q.id,true));
+
+// ── Успешная оплата ──
+bot.on('message',(msg)=>{
+  if(!msg.successful_payment) return;
+  const stars=msg.successful_payment.total_amount, chatId=msg.chat.id;
+  const payload=msg.successful_payment.invoice_payload;
+
+  if(payload.startsWith('topup_')){
+    if(!userBalances[chatId]) userBalances[chatId]=0;
+    userBalances[chatId]+=stars;
+    broadcast({type:'balance_add', userId:chatId, stars});
+    bot.sendMessage(chatId,
+      `✅ *Баланс пополнен!*\n\n⭐ *+${stars} Stars* зачислено!\n\nОткрой апгрейдер и играй 🎰`,
+      {parse_mode:'Markdown', reply_markup:{inline_keyboard:[[{text:'🎮 Апгрейдер', web_app:{url:WEBAPP_URL}}]]}}
+    );
+    return;
+  }
+
+  const match=payload.match(/buy_item_(\d+)_/);
+  const itemId=match?parseInt(match[1]):null;
+  if(itemId){ addToInv(chatId,itemId); broadcast({type:'purchase',userId:chatId,itemId,stars}); }
+  bot.sendMessage(chatId,`✅ Покупка успешна! Предмет добавлен в инвентарь.`,{
+    reply_markup:{inline_keyboard:[[{text:'🎮 Апгрейдер',web_app:{url:WEBAPP_URL}}]]}
+  });
+});
+
+// ── WebApp данные ──
+bot.on('message',(msg)=>{
+  if(!msg.web_app_data) return;
+  try{
+    const data=JSON.parse(msg.web_app_data.data), chatId=msg.chat.id;
+    if(data.action==='topup'){
+      const amount=Math.max(1,parseInt(data.amount)||1);
+      bot.sendInvoice(chatId,'⭐ Пополнение',`Пополнение на ${amount} Stars`,`topup_${amount}_${Date.now()}`,'','XTR',[{label:`${amount} Stars`,amount}]);
     }
-  } catch(e) { console.error('WebApp data error:', e); }
+    if(data.action==='buy'){
+      bot.sendInvoice(chatId,`🎁 ${data.itemName}`,`Покупка "${data.itemName}"`,`buy_item_${data.itemId}_${Date.now()}`,'','XTR',[{label:data.itemName,amount:data.price}]);
+    }
+    if(data.action==='upgrade_result'){
+      broadcast({type:'upgrade',win:data.win,betName:data.betName,betImg:data.betImg,betVal:data.betVal,prizeName:data.prizeName,prizeImg:data.prizeImg,prizeVal:data.prizeVal,user:msg.from.first_name||'Игрок',ts:Date.now()});
+    }
+    if(data.action==='get_inventory'){
+      // Отдаём инвентарь пользователя
+      const inv=getInv(chatId);
+      broadcast({type:'inventory_sync', userId:chatId, inventory:inv});
+    }
+  }catch(e){console.error(e);}
 });
 
 // ── API ──
-app.get('/health', (req, res) => res.json({ ok: true, clients: sseClients.size }));
+app.get('/health',(req,res)=>res.json({ok:true,clients:sseClients.size}));
+app.get('/inventory/:userId',(req,res)=>res.json(getInv(parseInt(req.params.userId))));
 
-app.listen(PORT, () => {
+app.listen(PORT,()=>{
   console.log('Bot is running...');
-  console.log('🤖 Bot started!');
+  console.log(`🤖 Bot started!`);
   console.log(`🌐 API: http://localhost:${PORT}`);
-  console.log(`🔗 WebApp URL: ${WEBAPP_URL}`);
+  console.log(`🔗 WebApp: ${WEBAPP_URL}`);
   console.log(`📡 SSE: http://localhost:${PORT}/feed`);
 });
 
 bot.setMyCommands([
-  { command: 'start',   description: '🏠 Главное меню' },
-  { command: 'upgrade', description: '🎰 Открыть апгрейдер' },
+  {command:'start',   description:'🏠 Главное меню'},
+  {command:'upgrade', description:'🎰 Открыть апгрейдер'},
+  {command:'myid',    description:'🆔 Узнать свой ID'},
+  {command:'addnft',  description:'🎁 Выдать подарок (только админ)'},
 ]);

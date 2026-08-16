@@ -13,19 +13,25 @@ if (tg) {
 
 // ── ITEMS ──
 const ITEMS = [
-  { id:1,  name:'Plush Heart',       img:'gifts/processed/plush-heart.png',        value:15,    rarity:'common'    },
-  { id:2,  name:'Teddy Bear',        img:'gifts/processed/teddy-bear.png',         value:15,    rarity:'common'    },
-  { id:3,  name:'Trophy',            img:'gifts/processed/trophy.png',             value:100,   rarity:'common'    },
-  { id:4,  name:'Instant Noodles',   img:'gifts/processed/instant-noodles.png',    value:380,   rarity:'common'    },
-  { id:5,  name:'Ice Cream',         img:'gifts/processed/ice-cream.png',          value:399,   rarity:'common'    },
-  { id:6,  name:'Statue of Liberty', img:'gifts/processed/statue-of-liberty.png',  value:470,   rarity:'common'    },
-  { id:7,  name:'Lollipop',          img:'gifts/processed/lollipop.png',           value:482,   rarity:'common'    },
-  { id:8,  name:'Backpack',          img:'gifts/processed/durovs-backpack.png',    value:500,   rarity:'uncommon'  },
-  { id:9,  name:'Blue Socks',        img:'gifts/processed/blue-socks.png',         value:529,   rarity:'uncommon'  },
-  { id:10, name:'Bag of Coins',      img:'gifts/processed/bag-of-coins.png',       value:560,   rarity:'uncommon'  },
-  { id:11, name:'Burning Joint',     img:'gifts/processed/burning-joint.png',      value:1349,  rarity:'rare'      },
-  { id:12, name:'Golden Watch',      img:'gifts/processed/golden-watch.png',       value:4879,  rarity:'rare'      },
-  { id:13, name:'Sunglasses',        img:'gifts/processed/sunglasses.png',         value:10845, rarity:'legendary' },
+  // Эти только для ставки (ваш предмет), нельзя выбрать как желаемый
+  { id:1,  name:'Plush Heart',       img:'gifts/processed/plush-heart.png',        value:15,    rarity:'common',   betOnly:true  },
+  { id:2,  name:'Teddy Bear',        img:'gifts/processed/teddy-bear.png',         value:15,    rarity:'common',   betOnly:true  },
+  // Обычные
+  { id:3,  name:'Homemade Cake',     img:'gifts/processed/homemade-cake.png',      value:50,    rarity:'common',   betOnly:false },
+  { id:4,  name:'Trophy',            img:'gifts/processed/trophy.png',             value:100,   rarity:'common',   betOnly:false },
+  { id:5,  name:'Instant Noodles',   img:'gifts/processed/instant-noodles.png',    value:380,   rarity:'common',   betOnly:false },
+  { id:6,  name:'Ice Cream',         img:'gifts/processed/ice-cream.png',          value:399,   rarity:'common',   betOnly:false },
+  { id:7,  name:'Statue of Liberty', img:'gifts/processed/statue-of-liberty.png',  value:470,   rarity:'common',   betOnly:false },
+  { id:8,  name:'Lollipop',          img:'gifts/processed/lollipop.png',           value:482,   rarity:'common',   betOnly:false },
+  // Необычные
+  { id:9,  name:'Backpack',          img:'gifts/processed/durovs-backpack.png',    value:500,   rarity:'uncommon', betOnly:false },
+  { id:10, name:'Blue Socks',        img:'gifts/processed/blue-socks.png',         value:529,   rarity:'uncommon', betOnly:false },
+  { id:11, name:'Bag of Coins',      img:'gifts/processed/bag-of-coins.png',       value:560,   rarity:'uncommon', betOnly:false },
+  // Редкие
+  { id:12, name:'Burning Joint',     img:'gifts/processed/burning-joint.png',      value:1349,  rarity:'rare',     betOnly:false },
+  { id:13, name:'Golden Watch',      img:'gifts/processed/golden-watch.png',       value:4879,  rarity:'rare',     betOnly:false },
+  // Легендарные
+  { id:14, name:'Sunglasses',        img:'gifts/processed/sunglasses.png',         value:10845, rarity:'legendary',betOnly:false },
 ];
 
 const RARITY = {
@@ -164,7 +170,7 @@ function renderGrid(){
   const grid=document.getElementById('itemGrid');
   const q=document.getElementById('searchInput').value.toLowerCase().trim();
   const sel=S.currentModal==='yours'?S.yoursItem:S.wantedItem;
-  let items=S.currentModal==='yours'?ITEMS.filter(i=>invCount(i.id)>0):[...ITEMS];
+  let items=S.currentModal==='yours'?ITEMS.filter(i=>invCount(i.id)>0):[...ITEMS].filter(i=>!i.betOnly);
   if(S.rarityFilter!=='all')items=items.filter(i=>i.rarity===S.rarityFilter);
   if(q)items=items.filter(i=>i.name.toLowerCase().includes(q));
   if(!items.length){
@@ -386,23 +392,45 @@ function pushFeedCard(card){
 }
 
 // SSE соединение с ботом для реальной ленты
+const BOT_API = 'http://localhost:3001';
+let sseConnection = null;
+
 function connectSSE(){
-  // Бот работает локально — пробуем подключиться
-  const BOT_URL='http://localhost:3001';
   try{
-    const es=new EventSource(`${BOT_URL}/feed`);
-    es.onmessage=e=>{
+    sseConnection = new EventSource(`${BOT_API}/feed`);
+    sseConnection.onmessage = e => {
       try{
-        const d=JSON.parse(e.data);
-        if(d.type==='upgrade'){
-          const shown=d.win?{name:d.prizeName,img:d.prizeImg,value:d.prizeVal}:{name:d.betName,img:d.betImg,value:d.betVal};
-          pushFeedCard(makeFeedCard(d.win,shown.name,shown.img,d.betVal,d.prizeVal,d.user||'Игрок',timeAgo(d.ts)));
+        const d = JSON.parse(e.data);
+        if(d.type === 'upgrade'){
+          const shown = d.win
+            ? {name:d.prizeName, img:d.prizeImg, value:d.prizeVal}
+            : {name:d.betName,  img:d.betImg,   value:d.betVal};
+          pushFeedCard(makeFeedCard(d.win, shown.name, shown.img, d.betVal, d.prizeVal, d.user||'Игрок', timeAgo(d.ts)));
         }
-        if(d.type==='balance_add'){ S.balance+=d.stars;saveState();updateBalance(); }
-        if(d.type==='purchase'){ if(d.itemId)onPurchaseSuccess(d.itemId); }
+        if(d.type === 'balance_add'){
+          S.balance += d.stars;
+          saveState(); updateBalance();
+          showToast(`+${d.stars} ⭐ зачислено!`, '#ffd700');
+        }
+        if(d.type === 'purchase' && d.itemId){
+          onPurchaseSuccess(d.itemId);
+        }
+        // Подарок выдан админом — добавляем в инвентарь
+        if(d.type === 'gift_received'){
+          const userId = tg?.initDataUnsafe?.user?.id;
+          if(!d.userId || d.userId === userId){
+            invAdd(d.itemId);
+            renderInventory();
+            const item = ITEMS.find(i=>i.id===d.itemId);
+            if(item) showToast(`🎁 Получен подарок: ${item.name}!`, '#ffd700');
+          }
+        }
       }catch(ex){}
     };
-    es.onerror=()=>{ es.close(); startFakeFeed(); };
+    sseConnection.onerror = () => {
+      sseConnection.close();
+      startFakeFeed();
+    };
   }catch(ex){ startFakeFeed(); }
 }
 
@@ -497,9 +525,49 @@ function showToast(msg,color){
 
 // ── TELEGRAM USER ──
 function initTelegramUser(){
-  if(!tg||!tg.initDataUnsafe?.user)return;
-  const user=tg.initDataUnsafe.user,name=user.first_name||'User',photo=user.photo_url;
-  document.getElementById('userAvatar').src=photo||`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1a3a6e&color=4d9fff&size=80&bold=true&format=svg`;
+  if(!tg||!tg.initDataUnsafe?.user) return;
+  const user = tg.initDataUnsafe.user;
+  const name = user.first_name || 'User';
+  const userId = user.id;
+
+  // Пробуем загрузить аватарку через бот API (localhost)
+  fetch(`http://localhost:3001/photo/${userId}`)
+    .then(r => r.json())
+    .then(d => {
+      if(d.url) document.getElementById('userAvatar').src = d.url;
+      else setInitialsAvatar(name);
+    })
+    .catch(() => setInitialsAvatar(name));
+}
+
+function setInitialsAvatar(name){
+  document.getElementById('userAvatar').src =
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1a3a6e&color=4d9fff&size=80&bold=true&format=svg`;
+}
+
+// ── SYNC инвентаря с бота ──
+function syncInventoryFromBot(){
+  if(!tg || !tg.initDataUnsafe?.user) return;
+  const userId = tg.initDataUnsafe.user.id;
+  fetch(`http://localhost:3001/inventory/${userId}`)
+    .then(r => r.json())
+    .then(inv => {
+      if(!Array.isArray(inv) || inv.length === 0) return;
+      // Мерджим с локальным инвентарём
+      inv.forEach(e => {
+        const local = S.inventory.find(x => x.itemId === e.itemId);
+        if(local){
+          // Берём максимум
+          local.count = Math.max(local.count, e.count);
+        } else {
+          S.inventory.push({itemId: e.itemId, count: e.count});
+        }
+      });
+      saveState();
+      updateInvBadge();
+      renderInventory();
+    })
+    .catch(()=>{});
 }
 
 // ── INIT ──
@@ -513,3 +581,21 @@ connectSSE();
 renderShop();
 renderInventory();
 switchPage('upgrade');
+
+// Проверяем URL параметр ?gift= (выдача подарка от админа)
+const urlParams = new URLSearchParams(window.location.search);
+const giftId = parseInt(urlParams.get('gift'));
+if(giftId){
+  const item = ITEMS.find(i=>i.id===giftId);
+  if(item){
+    invAdd(giftId);
+    renderInventory();
+    setTimeout(()=>{
+      showToast(`🎁 Получен подарок: ${item.name}!`, '#ffd700');
+    }, 500);
+    // Убираем параметр из URL
+    history.replaceState(null,'',window.location.pathname);
+  }
+}
+
+setTimeout(syncInventoryFromBot, 1000);
