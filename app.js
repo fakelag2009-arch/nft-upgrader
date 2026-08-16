@@ -392,7 +392,7 @@ function pushFeedCard(card){
 }
 
 // SSE соединение с ботом для реальной ленты
-const BOT_API = 'http://localhost:3001';
+const BOT_API = 'https://web-production-dd3cb.up.railway.app';
 let sseConnection = null;
 
 function connectSSE(){
