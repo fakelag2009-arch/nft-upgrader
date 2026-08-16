@@ -22,7 +22,7 @@
     </div>
     <div class="topbar-spacer"></div>
     <div class="topbar-right">
-      <div class="avatar"><img id="userAvatar" src="https://api.dicebear.com/7.x/thumbs/svg?seed=tg&backgroundColor=1a1a2e" alt="av"/></div>
+      <div class="avatar"><img id="userAvatar" src="" alt="av" style="display:none"/><div id="userInitials" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;background:linear-gradient(135deg,#1a6fff,#aa00ff);letter-spacing:0.5px"></div></div>
       <div class="topbar-info">
         <div class="topbar-balance" id="userBalance">0 ⭐</div>
         <button class="topup-btn" onclick="showTopup()">+ Пополнить</button>
@@ -202,7 +202,10 @@
   <nav class="bottom-nav">
     <button class="nav-btn active" id="nav-home" onclick="switchPage('home')">
       <div class="nav-active-pill"></div>
-      <span class="nav-icon">🏠</span>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill="currentColor" opacity="0.9"/>
+        <path d="M9 21V15H15V21" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
       <span class="nav-label">Главная</span>
     </button>
   </nav>
