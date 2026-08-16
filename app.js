@@ -3,7 +3,6 @@ const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready();
   tg.expand();
-
   tg.setHeaderColor('#07070f');
   tg.setBackgroundColor('#07070f');
   // Отключаем вертикальный свайп чтобы не закрывал приложение при скролле
@@ -13,7 +12,6 @@ if (tg) {
 }
 
 // ── ITEMS ──
-
 const ITEMS = [
   // Эти только для ставки (ваш предмет), нельзя выбрать как желаемый
   { id:1,  name:'Plush Heart',       img:'gifts/processed/plush-heart.png',        value:15,    rarity:'common',   betOnly:true  },
@@ -243,21 +241,16 @@ function closeBuyModalOutside(e){ if(e.target===document.getElementById('buyModa
 
 function confirmBuy(id){
   const item=ITEMS.find(i=>i.id===id);if(!item)return;
-  // Сначала проверяем баланс — если хватает, списываем с баланса
-  if(S.balance >= item.value){
-    S.balance -= item.value;
-    invAdd(item.id);updateBalance();renderShop();renderInventory();closeBuyModal();
-    showToast(\u2705 \ добавлен!,'#00e676');
-    tg?.HapticFeedback?.notificationOccurred('success');
-    return;
-  }
-  // сли баланса не хватает — отправляем счёт через Telegram
   if(tg&&tg.initData){
     closeBuyModal();
     tg.sendData(JSON.stringify({action:'buy',itemId:item.id,itemName:item.name,price:item.value}));
-    showToast(\u2b50 Счёт отправлен!);return;
+    showToast(`⭐ Счёт отправлен!`);return;
   }
-  showToast('\u274c едостаточно Stars!');closeBuyModal();
+  if(S.balance<item.value){showToast('❌ Недостаточно Stars!');closeBuyModal();return;}
+  S.balance-=item.value;
+  invAdd(item.id);updateBalance();renderShop();renderInventory();closeBuyModal();
+  showToast(`✅ ${item.name} добавлен!`,'#00e676');
+  tg?.HapticFeedback?.notificationOccurred('success');
 }
 
 function onPurchaseSuccess(itemId){
@@ -470,62 +463,6 @@ function startFakeFeed(){
   })();
 }
 
-// ── PROMO ──
-function showPromo(){
-  const modal = document.getElementById('promoModal');
-  modal.style.display = 'flex';
-  requestAnimationFrame(()=>modal.classList.add('open'));
-  document.getElementById('promoInput').value = '';
-  document.getElementById('promoResult').textContent = '';
-  document.getElementById('promoResult').style.color = '';
-  setTimeout(()=>document.getElementById('promoInput').focus(), 400);
-  tg?.HapticFeedback?.impactOccurred('light');
-}
-function closePromo(){
-  const modal = document.getElementById('promoModal');
-  modal.classList.remove('open');
-  setTimeout(()=>{ modal.style.display='none'; }, 350);
-}
-function promoParticles(){
-  const box = document.getElementById('promoParticles'); box.innerHTML='';
-  ['#ffd700','#ff9500','#00e676','#4d9fff','#ab47bc'].forEach(col=>{
-    for(let j=0;j<6;j++){
-      const p=document.createElement('div');
-      p.style.cssText=position:absolute;width:8px;height:8px;border-radius:50%;background:\;left:\%;top:\%;--tx:\px;--ty:\px;animation:particle 0.9s ease-out \s forwards;
-      box.appendChild(p);
-    }
-  });
-}
-function activatePromo(){
-  const code = document.getElementById('promoInput').value.trim().toUpperCase();
-  const resEl = document.getElementById('promoResult');
-  if(!code){ resEl.style.color='#ff4757'; resEl.textContent='веди промокод'; tg?.HapticFeedback?.notificationOccurred('error'); return; }
-  var uid = null;
-  try{ uid = window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
-  if(!uid){ resEl.style.color='#ff4757'; resEl.textContent='ткрой через бота'; return; }
-  resEl.style.color='rgba(255,255,255,0.5)'; resEl.textContent='✨ роверяем...';
-  tg?.HapticFeedback?.impactOccurred('medium');
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST','https://web-production-dd3cb.up.railway.app/promo/use');
-  xhr.setRequestHeader('Content-Type','application/json');
-  xhr.onload = function(){
-    var d = JSON.parse(xhr.responseText);
-    if(d.ok){
-      S.balance = d.balance; saveState(); updateBalance();
-      resEl.style.color='#00e676'; resEl.textContent='🎉 +'+d.stars+' ⭐ зачислено!';
-      promoParticles();
-      tg?.HapticFeedback?.notificationOccurred('success');
-      showToast('⭐ +'+d.stars+' Stars!','#ffd700');
-      setTimeout(closePromo, 2000);
-    } else {
-      resEl.style.color='#ff4757'; resEl.textContent='❌ '+(d.error||'шибка');
-      tg?.HapticFeedback?.notificationOccurred('error');
-    }
-  };
-  xhr.onerror = function(){ resEl.style.color='#ff4757'; resEl.textContent='шибка сети'; };
-  xhr.send(JSON.stringify({code:code, userId:uid}));
-}
-
 // ── TOPUP ──
 function showTopup(){ tg?.HapticFeedback?.impactOccurred('light');setAmt(100);document.getElementById('topupModal').classList.add('open'); }
 function closeTopup(){ document.getElementById('topupModal').classList.remove('open'); }
@@ -594,7 +531,7 @@ function initTelegramUser(){
   const userId = user.id;
 
   // Пробуем загрузить аватарку через бот API (localhost)
-  fetch(`https://web-production-dd3cb.up.railway.app/photo/${userId}`)
+  fetch(`http://localhost:3001/photo/${userId}`)
     .then(r => r.json())
     .then(d => {
       if(d.url) document.getElementById('userAvatar').src = d.url;
@@ -609,24 +546,10 @@ function setInitialsAvatar(name){
 }
 
 // ── SYNC инвентаря с бота ──
-function getTgUserId(){
-  try{
-    if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.id)
-      return tg.initDataUnsafe.user.id;
-    if(tg&&tg.initData&&tg.initData.length>0){
-      const p=new URLSearchParams(tg.initData);
-      const userStr=p.get('user');
-      if(userStr){ const u=JSON.parse(decodeURIComponent(userStr)); if(u&&u.id) return u.id; }
-    }
-  }catch(e){}
-  // Fallback: попробуем через WebApp.initDataUnsafe напрямую
-  try{ if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user) return window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
-  return null;
-}
 function syncInventoryFromBot(){
-  const userId = getTgUserId();
-  if(!userId) return;
-  fetch(`https://web-production-dd3cb.up.railway.app/inventory/${userId}`)
+  if(!tg || !tg.initDataUnsafe?.user) return;
+  const userId = tg.initDataUnsafe.user.id;
+  fetch(`http://localhost:3001/inventory/${userId}`)
     .then(r => r.json())
     .then(inv => {
       if(!Array.isArray(inv) || inv.length === 0) return;
@@ -684,31 +607,4 @@ if(starsGift && starsGift > 0){
   history.replaceState(null,'',window.location.pathname);
 }
 
-// SYNC BALANCE
-function syncFromServer(){
-  var uid = null;
-  try{ uid = window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
-  var el = document.getElementById('userBalance');
-  if(!uid){
-    if(el) el.style.color = 'red';
-    setTimeout(syncFromServer, 300);
-    return;
-  }
-  if(el) el.style.color = 'orange';
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'https://web-production-dd3cb.up.railway.app/balance/' + uid);
-  xhr.onload = function(){
-    var d = JSON.parse(xhr.responseText);
-    var bal = d.balance || 0;
-    S.balance = bal;
-    saveState();
-    if(el){ el.textContent = bal + ' \u2b50'; el.style.color = ''; }
-    if(bal > 0) showToast('\u2b50 ' + bal + ' Stars', '#ffd700');
-  };
-  xhr.onerror = function(){ if(el) el.style.color = 'red'; };
-  xhr.send();
-}
-setTimeout(syncFromServer, 300);
-setTimeout(syncFromServer, 1000);
-setTimeout(syncFromServer, 3000);
-if(tg) tg.onEvent('viewportChanged', function(){ syncFromServer(); });
+setTimeout(syncInventoryFromBot, 1000);
