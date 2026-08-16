@@ -526,14 +526,32 @@ function buyStars(amount){
   amount=Math.max(1,parseInt(amount)||1);
   closeTopup();
   tg?.HapticFeedback?.impactOccurred('medium');
-  if(tg&&tg.initData){
-    // Отправляем запрос боту на создание invoice
-    tg.sendData(JSON.stringify({action:'topup',amount}));
-    showToast(`⭐ Открываем оплату ${amount} Stars...`);
+  if(tg && tg.initData){
+    showToast('\u23f3 \u041e\u0442\u043a\u0440\u044b\u0432\u0430\u0435\u043c \u043e\u043f\u043b\u0430\u0442\u0443...', '#4d9fff');
+    // Запрашиваем invoice link у бота
+    fetch('https://web-production-dd3cb.up.railway.app/create-invoice', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({amount: amount})
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.ok && d.link){
+        // Открываем нативный Telegram invoice
+        tg.openInvoice(d.link, function(status){
+          if(status === 'paid'){
+            showToast('\u2705 \u041e\u043f\u043b\u0430\u0447\u0435\u043d\u043e! \u0411\u0430\u043b\u0430\u043d\u0441 \u0437\u0430\u0447\u0438\u0441\u043b\u044f\u0435\u0442\u0441\u044f...', '#00e676');
+          }
+        });
+      } else {
+        showToast('\u274c \u041e\u0448\u0438\u0431\u043a\u0430: ' + (d.error||'try again'), '#ff4757');
+      }
+    })
+    .catch(function(){ showToast('\u274c \u041e\u0448\u0438\u0431\u043a\u0430 \u0441\u0435\u0442\u0438', '#ff4757'); });
     return;
   }
   S.balance+=amount;saveState();updateBalance();
-  showToast(`✅ +${amount} ⭐ добавлено!`,'#ffd700');
+  showToast('\u2705 +'+amount+' \u2b50 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e!','#ffd700');
 }
 
 // ── INNER TABS ──
