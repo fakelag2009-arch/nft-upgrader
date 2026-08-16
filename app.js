@@ -531,7 +531,7 @@ function initTelegramUser(){
   const userId = user.id;
 
   // Пробуем загрузить аватарку через бот API (localhost)
-  fetch(`http://localhost:3001/photo/${userId}`)
+  fetch(`https://web-production-dd3cb.up.railway.app/photo/${userId}`)
     .then(r => r.json())
     .then(d => {
       if(d.url) document.getElementById('userAvatar').src = d.url;
@@ -549,7 +549,7 @@ function setInitialsAvatar(name){
 function syncInventoryFromBot(){
   if(!tg || !tg.initDataUnsafe?.user) return;
   const userId = tg.initDataUnsafe.user.id;
-  fetch(`http://localhost:3001/inventory/${userId}`)
+  fetch(`https://web-production-dd3cb.up.railway.app/inventory/${userId}`)
     .then(r => r.json())
     .then(inv => {
       if(!Array.isArray(inv) || inv.length === 0) return;
