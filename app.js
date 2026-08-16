@@ -468,6 +468,39 @@ function startFakeFeed(){
   })();
 }
 
+function renderInventoryPage(){
+  const grid = document.getElementById('invGridPage');
+  const empty = document.getElementById('invEmptyPage');
+  if(!grid || !empty) return;
+  if(S.inventory.length === 0){
+    empty.style.display = 'flex'; grid.style.display = 'none'; return;
+  }
+  empty.style.display = 'none'; grid.style.display = 'grid';
+  grid.innerHTML = S.inventory.map(e=>{
+    const item = ITEMS.find(i=>i.id===e.itemId); if(!item) return '';
+    const col = RARITY[item.rarity].color;
+    const used = S.yoursItem && S.yoursItem.id === item.id;
+    return `<div class="inv-card">
+      ${e.count>1?`<div class="inv-card-count">×${e.count}</div>`:''}
+      <img class="inv-card-img" src="${item.img}" alt="${item.name}">
+      <div class="inv-card-name">${item.name}</div>
+      <div class="inv-card-value">${fmt(item.value)} ⭐</div>
+      <div class="inv-card-rarity" style="background:linear-gradient(90deg,${col}44,${col})"></div>
+      <button class="inv-use-btn ${used?'used':''}" onclick="useFromInventoryPage(${item.id})">
+        ${used?'✓ Выбрано':'⬆ Поставить'}
+      </button>
+    </div>`;
+  }).join('');
+}
+function useFromInventoryPage(id){
+  const item = ITEMS.find(i=>i.id===id); if(!item) return;
+  S.yoursItem = item;
+  switchPage('upgrade');
+  setTimeout(()=>{ updateUI(); renderInventory(); }, 100);
+  showToast(`⬆ ${item.name} выбран`);
+  tg?.HapticFeedback?.selectionChanged();
+}
+
 // ── TOPUP ──
 function showTopup(){ tg?.HapticFeedback?.impactOccurred('light');setAmt(100);document.getElementById('topupModal').classList.add('open'); }
 function closeTopup(){ document.getElementById('topupModal').classList.remove('open'); }
@@ -515,8 +548,8 @@ function switchPage(name){
   const pg=document.getElementById('page-'+name),nb=document.getElementById('nav-'+name);
   if(pg)pg.classList.add('active');
   if(nb)nb.classList.add('active');
-  if(name==='shop')renderShop();
-  if(name==='inventory')renderInventory();
+  if(name==='upgrade')renderShop();
+  if(name==='inventory')renderInventoryPage();
 }
 
 // ── TOAST ──
