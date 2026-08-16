@@ -241,16 +241,21 @@ function closeBuyModalOutside(e){ if(e.target===document.getElementById('buyModa
 
 function confirmBuy(id){
   const item=ITEMS.find(i=>i.id===id);if(!item)return;
+  // Сначала списываем с баланса если хватает
+  if(S.balance >= item.value){
+    S.balance -= item.value;
+    invAdd(item.id);updateBalance();renderShop();renderInventory();closeBuyModal();
+    showToast(`✅ ${item.name} добавлен!`,'#00e676');
+    tg?.HapticFeedback?.notificationOccurred('success');
+    return;
+  }
+  // Если баланса не хватает — счёт через Telegram
   if(tg&&tg.initData){
     closeBuyModal();
     tg.sendData(JSON.stringify({action:'buy',itemId:item.id,itemName:item.name,price:item.value}));
     showToast(`⭐ Счёт отправлен!`);return;
   }
-  if(S.balance<item.value){showToast('❌ Недостаточно Stars!');closeBuyModal();return;}
-  S.balance-=item.value;
-  invAdd(item.id);updateBalance();renderShop();renderInventory();closeBuyModal();
-  showToast(`✅ ${item.name} добавлен!`,'#00e676');
-  tg?.HapticFeedback?.notificationOccurred('success');
+  showToast('❌ Недостаточно Stars!');closeBuyModal();
 }
 
 function onPurchaseSuccess(itemId){
@@ -568,6 +573,65 @@ function syncInventoryFromBot(){
       renderInventory();
     })
     .catch(()=>{});
+}
+
+// ── PROMO ──
+function showPromo(){
+  const modal = document.getElementById('promoModal');
+  modal.style.display = 'flex';
+  requestAnimationFrame(()=>modal.classList.add('open'));
+  document.getElementById('promoInput').value = '';
+  document.getElementById('promoResult').textContent = '';
+  document.getElementById('promoResult').style.color = '';
+  setTimeout(()=>document.getElementById('promoInput').focus(), 400);
+  tg?.HapticFeedback?.impactOccurred('light');
+}
+function closePromo(){
+  const modal = document.getElementById('promoModal');
+  modal.classList.remove('open');
+  setTimeout(()=>{ modal.style.display='none'; }, 350);
+}
+function promoParticles(){
+  const box = document.getElementById('promoParticles'); if(!box) return; box.innerHTML='';
+  ['#ffd700','#ff9500','#00e676','#4d9fff','#ab47bc'].forEach(col=>{
+    for(let j=0;j<6;j++){
+      const p=document.createElement('div');
+      const tx=((Math.random()-.5)*200).toFixed(0);
+      const ty=(-(Math.random()*180+60)).toFixed(0);
+      const delay=(Math.random()*0.3).toFixed(2);
+      p.style.cssText=`position:absolute;width:8px;height:8px;border-radius:50%;background:${col};left:${(20+Math.random()*60).toFixed(0)}%;top:${(30+Math.random()*40).toFixed(0)}%;--tx:${tx}px;--ty:${ty}px;animation:particle 0.9s ease-out ${delay}s forwards`;
+      box.appendChild(p);
+    }
+  });
+}
+function activatePromo(){
+  const code = document.getElementById('promoInput').value.trim().toUpperCase();
+  const resEl = document.getElementById('promoResult');
+  if(!code){ resEl.style.color='#ff4757'; resEl.textContent='Введи промокод'; tg?.HapticFeedback?.notificationOccurred('error'); return; }
+  var uid = null;
+  try{ uid = window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
+  if(!uid){ resEl.style.color='#ff4757'; resEl.textContent='Открой через бота'; return; }
+  resEl.style.color='rgba(255,255,255,0.5)'; resEl.textContent='✨ Проверяем...';
+  tg?.HapticFeedback?.impactOccurred('medium');
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST','https://web-production-dd3cb.up.railway.app/promo/use');
+  xhr.setRequestHeader('Content-Type','application/json');
+  xhr.onload = function(){
+    var d = JSON.parse(xhr.responseText);
+    if(d.ok){
+      S.balance = d.balance; saveState(); updateBalance();
+      resEl.style.color='#00e676'; resEl.textContent='🎉 +'+d.stars+' ⭐ зачислено!';
+      promoParticles();
+      tg?.HapticFeedback?.notificationOccurred('success');
+      showToast('⭐ +'+d.stars+' Stars!','#ffd700');
+      setTimeout(closePromo, 2000);
+    } else {
+      resEl.style.color='#ff4757'; resEl.textContent='❌ '+(d.error||'Ошибка');
+      tg?.HapticFeedback?.notificationOccurred('error');
+    }
+  };
+  xhr.onerror = function(){ resEl.style.color='#ff4757'; resEl.textContent='Ошибка сети'; };
+  xhr.send(JSON.stringify({code:code, userId:uid}));
 }
 
 // ── INIT ──
