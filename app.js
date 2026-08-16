@@ -622,24 +622,33 @@ if(starsGift && starsGift > 0){
   history.replaceState(null,'',window.location.pathname);
 }
 
-// Загружаем баланс и инвентарь с сервера
+// агружаем баланс через POST /init
 function syncFromServer(){
-  const userId = getTgUserId();
-  if(!userId){ setTimeout(syncFromServer, 300); return; }
-  // агружаем баланс
-  fetch('https://web-production-dd3cb.up.railway.app/balance/'+userId)
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      const bal = parseInt(d.balance) || 0;
-      S.balance = bal;
-      saveState();
-      const el = document.getElementById('userBalance');
-      if(el) el.textContent = bal + ' ⭐';
-      if(bal > 0) showToast('⭐ ' + bal + ' Stars на балансе', '#ffd700');
-    })
-    .catch(function(e){ showToast('шибка загрузки: '+e.message, '#ff4757'); });
-  syncInventoryFromBot();
+  var initData = tg && tg.initData;
+  if(!initData || initData.length === 0){ setTimeout(syncFromServer, 300); return; }
+  fetch('https://web-production-dd3cb.up.railway.app/init', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({initData: initData})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var bal = parseInt(d.balance) || 0;
+    S.balance = bal;
+    saveState();
+    var el = document.getElementById('userBalance');
+    if(el) el.textContent = bal + ' \u2b50';
+    if(bal > 0) showToast('\u2b50 ' + bal + ' Stars na balanse', '#ffd700');
+    if(d.inventory && d.inventory.length > 0){
+      d.inventory.forEach(function(e){
+        var local = S.inventory.find(function(x){ return x.itemId === e.itemId; });
+        if(local){ local.count = Math.max(local.count, e.count); }
+        else { S.inventory.push({itemId:e.itemId,count:e.count}); }
+      });
+      saveState(); updateInvBadge(); renderInventory();
+    }
+  })
+  .catch(function(){});
 }
-// апускаем сразу и через 1 сек для надёжности
 setTimeout(syncFromServer, 500);
-setTimeout(syncFromServer, 2000);
+setTimeout(syncFromServer, 2500);
