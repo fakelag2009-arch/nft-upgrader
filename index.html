@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8"/>
@@ -115,14 +115,14 @@
 
     <!-- INVENTORY PAGE -->
     <section class="page" id="page-inventory">
-      <div class="page-title"><span class="title-icon">🎒</span> ИНВЕНТАРЬ</div>
+      <div class="page-title"><span class="title-icon">🎒</span> ТЬ</div>
       <div style="padding:0 14px">
-                <div class="inv-empty" id="invEmptyPage">
-          <div class="inv-empty-title">нвентарь пуст</div>
-          <button class="inv-go-shop-big" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('shop'),100)">
-            🛍 ерейти в магазин
-          </button>
+        <div class="inv-empty" id="invEmptyPage">
+          <p style="font-size:18px;font-weight:700;color:#fff;margin:0 0 20px;text-align:center">нвентарь пуст</p>
+          <button class="inv-go-shop-big" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('shop'),100)">🛍 ерейти в магазин</button>
         </div>
+        <div class="inv-grid" id="invGridPage" style="display:none"></div>
+      </div>
     </section>
     <section class="page" id="page-upgrade">
       <div class="page-title"><span class="title-icon">⬆</span> UPGRADE</div>
