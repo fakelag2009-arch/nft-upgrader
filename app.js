@@ -11,6 +11,31 @@ if (tg) {
   if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
 }
 
+// ── DEBUG — показать userId прямо в заголовке ──
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    var uid = null;
+    try {
+      var t = window.Telegram && window.Telegram.WebApp;
+      if(t && t.initDataUnsafe && t.initDataUnsafe.user) uid = t.initDataUnsafe.user.id;
+      if(!uid && t && t.initData) {
+        var p = new URLSearchParams(t.initData);
+        var us = p.get('user');
+        if(us) uid = JSON.parse(decodeURIComponent(us)).id;
+      }
+    }catch(e){}
+    var el = document.getElementById('userBalance');
+    if(el) el.textContent = (uid ? uid+' ⭐' : 'no-uid');
+    if(uid){
+      fetch('https://web-production-dd3cb.up.railway.app/balance/'+uid)
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(el) el.textContent = (d.balance||0)+' ⭐';
+        });
+    }
+  }, 1500);
+});
+
 // ── ITEMS ──
 const ITEMS = [
   // Эти только для ставки (ваш предмет), нельзя выбрать как желаемый
