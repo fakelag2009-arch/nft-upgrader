@@ -526,7 +526,12 @@ function buyStars(amount){
   amount=Math.max(1,parseInt(amount)||1);
   closeTopup();
   tg?.HapticFeedback?.impactOccurred('medium');
-  if(tg&&tg.initData){ tg.sendData(JSON.stringify({action:'topup',amount}));showToast(`⭐ Запрос на ${amount} Stars отправлен...`);return; }
+  if(tg&&tg.initData){
+    // Отправляем запрос боту на создание invoice
+    tg.sendData(JSON.stringify({action:'topup',amount}));
+    showToast(`⭐ Открываем оплату ${amount} Stars...`);
+    return;
+  }
   S.balance+=amount;saveState();updateBalance();
   showToast(`✅ +${amount} ⭐ добавлено!`,'#ffd700');
 }
