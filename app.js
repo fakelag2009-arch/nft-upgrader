@@ -491,41 +491,57 @@ function startFakeFeed(){
 
 // ── PROMO ──
 function showPromo(){
-  document.getElementById('promoModal').style.display='flex';
-  document.getElementById('promoInput').value='';
-  document.getElementById('promoResult').textContent='';
-  setTimeout(()=>document.getElementById('promoInput').focus(),100);
+  const modal = document.getElementById('promoModal');
+  modal.style.display = 'flex';
+  requestAnimationFrame(()=>modal.classList.add('open'));
+  document.getElementById('promoInput').value = '';
+  document.getElementById('promoResult').textContent = '';
+  document.getElementById('promoResult').style.color = '';
+  setTimeout(()=>document.getElementById('promoInput').focus(), 400);
+  tg?.HapticFeedback?.impactOccurred('light');
 }
 function closePromo(){
-  document.getElementById('promoModal').style.display='none';
+  const modal = document.getElementById('promoModal');
+  modal.classList.remove('open');
+  setTimeout(()=>{ modal.style.display='none'; }, 350);
+}
+function promoParticles(){
+  const box = document.getElementById('promoParticles'); box.innerHTML='';
+  ['#ffd700','#ff9500','#00e676','#4d9fff','#ab47bc'].forEach(col=>{
+    for(let j=0;j<6;j++){
+      const p=document.createElement('div');
+      p.style.cssText=position:absolute;width:8px;height:8px;border-radius:50%;background:\;left:\%;top:\%;--tx:\px;--ty:\px;animation:particle 0.9s ease-out \s forwards;
+      box.appendChild(p);
+    }
+  });
 }
 function activatePromo(){
   const code = document.getElementById('promoInput').value.trim().toUpperCase();
   const resEl = document.getElementById('promoResult');
-  if(!code){ resEl.style.color='#ff4757'; resEl.textContent='Введи промокод'; return; }
-  // Получаем userId
+  if(!code){ resEl.style.color='#ff4757'; resEl.textContent='веди промокод'; tg?.HapticFeedback?.notificationOccurred('error'); return; }
   var uid = null;
   try{ uid = window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
-  if(!uid){ resEl.style.color='#ff4757'; resEl.textContent='Ошибка: нет userId'; return; }
-  resEl.style.color='#888'; resEl.textContent='Активируем...';
+  if(!uid){ resEl.style.color='#ff4757'; resEl.textContent='ткрой через бота'; return; }
+  resEl.style.color='rgba(255,255,255,0.5)'; resEl.textContent='✨ роверяем...';
+  tg?.HapticFeedback?.impactOccurred('medium');
   var xhr = new XMLHttpRequest();
   xhr.open('POST','https://web-production-dd3cb.up.railway.app/promo/use');
   xhr.setRequestHeader('Content-Type','application/json');
   xhr.onload = function(){
     var d = JSON.parse(xhr.responseText);
     if(d.ok){
-      S.balance = d.balance;
-      saveState(); updateBalance();
-      resEl.style.color='#00e676';
-      resEl.textContent = '✅ +' + d.stars + ' ⭐ зачислено!';
-      showToast('⭐ +' + d.stars + ' Stars!','#00e676');
-      setTimeout(closePromo, 1500);
+      S.balance = d.balance; saveState(); updateBalance();
+      resEl.style.color='#00e676'; resEl.textContent='🎉 +'+d.stars+' ⭐ зачислено!';
+      promoParticles();
+      tg?.HapticFeedback?.notificationOccurred('success');
+      showToast('⭐ +'+d.stars+' Stars!','#ffd700');
+      setTimeout(closePromo, 2000);
     } else {
-      resEl.style.color='#ff4757';
-      resEl.textContent = '❌ ' + d.error;
+      resEl.style.color='#ff4757'; resEl.textContent='❌ '+(d.error||'шибка');
+      tg?.HapticFeedback?.notificationOccurred('error');
     }
   };
-  xhr.onerror = function(){ resEl.style.color='#ff4757'; resEl.textContent='Ошибка сети'; };
+  xhr.onerror = function(){ resEl.style.color='#ff4757'; resEl.textContent='шибка сети'; };
   xhr.send(JSON.stringify({code:code, userId:uid}));
 }
 
