@@ -267,16 +267,21 @@ function closeBuyModalOutside(e){ if(e.target===document.getElementById('buyModa
 
 function confirmBuy(id){
   const item=ITEMS.find(i=>i.id===id);if(!item)return;
+  // Сначала проверяем баланс — если хватает, списываем с баланса
+  if(S.balance >= item.value){
+    S.balance -= item.value;
+    invAdd(item.id);updateBalance();renderShop();renderInventory();closeBuyModal();
+    showToast(\u2705 \ добавлен!,'#00e676');
+    tg?.HapticFeedback?.notificationOccurred('success');
+    return;
+  }
+  // сли баланса не хватает — отправляем счёт через Telegram
   if(tg&&tg.initData){
     closeBuyModal();
     tg.sendData(JSON.stringify({action:'buy',itemId:item.id,itemName:item.name,price:item.value}));
-    showToast(`⭐ Счёт отправлен!`);return;
+    showToast(\u2b50 Счёт отправлен!);return;
   }
-  if(S.balance<item.value){showToast('❌ Недостаточно Stars!');closeBuyModal();return;}
-  S.balance-=item.value;
-  invAdd(item.id);updateBalance();renderShop();renderInventory();closeBuyModal();
-  showToast(`✅ ${item.name} добавлен!`,'#00e676');
-  tg?.HapticFeedback?.notificationOccurred('success');
+  showToast('\u274c едостаточно Stars!');closeBuyModal();
 }
 
 function onPurchaseSuccess(itemId){
