@@ -277,3 +277,157 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 .topup-pay-btn:active{transform:scale(0.97)}
 .topup-pay-btn span:last-child{background:rgba(255,255,255,0.15);border-radius:10px;padding:3px 12px;font-size:14px}
 .topup-footer{font-size:11px;color:var(--text3);text-align:center;line-height:1.5}
+
+/* ── PROMO NAV BUTTON ── */
+.promo-nav-btn { position: relative; overflow: visible !important; }
+.promo-glow-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -60%);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+  animation: promoGlowPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes promoGlowPulse {
+  0%, 100% { transform: translate(-50%, -60%) scale(1); opacity: 0.6; }
+  50% { transform: translate(-50%, -60%) scale(1.5); opacity: 1; }
+}
+.promo-nav-btn .nav-icon {
+  animation: promoIconWiggle 3s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes promoIconWiggle {
+  0%, 80%, 100% { transform: rotate(0deg); }
+  85% { transform: rotate(-15deg); }
+  90% { transform: rotate(15deg); }
+  95% { transform: rotate(-10deg); }
+}
+
+/* ── PROMO OVERLAY ── */
+.promo-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0);
+  z-index: 2000;
+  align-items: flex-end;
+  justify-content: center;
+  transition: background 0.3s;
+}
+.promo-overlay.open {
+  display: flex;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+}
+.promo-sheet {
+  position: relative;
+  width: 100%; max-width: 480px;
+  background: linear-gradient(180deg, #1a1a35 0%, #0d0d1f 100%);
+  border-radius: 28px 28px 0 0;
+  padding: 0 24px 40px;
+  overflow: hidden;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.promo-overlay.open .promo-sheet {
+  transform: translateY(0);
+}
+.promo-handle {
+  width: 40px; height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+  margin: 14px auto 28px;
+}
+.promo-icon-wrap {
+  position: relative;
+  width: 80px; height: 80px;
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.promo-icon-bg {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(26,111,255,0.15) 50%, transparent 70%);
+  animation: promoIconBg 2.5s ease-in-out infinite;
+}
+@keyframes promoIconBg {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.promo-icon-emoji {
+  font-size: 44px;
+  filter: drop-shadow(0 0 12px rgba(255,215,0,0.6));
+  animation: promoIconFloat 3s ease-in-out infinite;
+  position: relative; z-index: 1;
+}
+@keyframes promoIconFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(8deg); }
+}
+.promo-title {
+  text-align: center;
+  font-size: 22px; font-weight: 800;
+  color: #fff; margin: 0 0 8px;
+  letter-spacing: 0.5px;
+}
+.promo-subtitle {
+  text-align: center;
+  font-size: 13px; color: rgba(255,255,255,0.45);
+  margin: 0 0 28px;
+}
+.promo-input-wrap {
+  position: relative; margin-bottom: 14px;
+}
+.promo-input {
+  width: 100%; box-sizing: border-box;
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 16px 20px;
+  color: #fff; font-size: 18px; font-weight: 700;
+  letter-spacing: 3px; text-align: center;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.promo-input::placeholder { color: rgba(255,255,255,0.2); letter-spacing: 1px; font-weight: 400; font-size: 14px; }
+.promo-input:focus {
+  border-color: rgba(255,215,0,0.5);
+  box-shadow: 0 0 0 3px rgba(255,215,0,0.1), inset 0 0 20px rgba(255,215,0,0.03);
+}
+.promo-input-glow {
+  position: absolute; inset: 0;
+  border-radius: 16px;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255,215,0,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.promo-btn {
+  position: relative; overflow: hidden;
+  width: 100%;
+  background: linear-gradient(135deg, #ffd700 0%, #ff9500 100%);
+  border: none; border-radius: 16px;
+  padding: 16px; margin-bottom: 14px;
+  color: #000; font-size: 16px; font-weight: 800;
+  cursor: pointer; letter-spacing: 0.5px;
+  box-shadow: 0 4px 20px rgba(255,215,0,0.3);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.promo-btn:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(255,215,0,0.2); }
+.promo-btn-shine {
+  position: absolute; top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: promoShine 2.5s ease-in-out infinite;
+}
+@keyframes promoShine {
+  0% { left: -100%; }
+  40%, 100% { left: 150%; }
+}
+.promo-result {
+  text-align: center; font-size: 14px; font-weight: 600;
+  min-height: 22px; transition: all 0.3s;
+}
+.promo-particles {
+  position: absolute; inset: 0; pointer-events: none; z-index: 10;
+}
