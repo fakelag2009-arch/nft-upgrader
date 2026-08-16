@@ -349,3 +349,5 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
   color: #ffd700;
   text-shadow: 0 0 16px rgba(255,215,0,0.6);
 }
+
+.home-cases-btn .home-btn-sub { color: rgba(255,215,0,0.45); }
