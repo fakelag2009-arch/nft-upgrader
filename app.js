@@ -550,12 +550,14 @@ function getTgUserId(){
   try{
     if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.id)
       return tg.initDataUnsafe.user.id;
-    if(tg&&tg.initData){
+    if(tg&&tg.initData&&tg.initData.length>0){
       const p=new URLSearchParams(tg.initData);
-      const u=JSON.parse(decodeURIComponent(p.get('user')||'{}'));
-      if(u.id) return u.id;
+      const userStr=p.get('user');
+      if(userStr){ const u=JSON.parse(decodeURIComponent(userStr)); if(u&&u.id) return u.id; }
     }
   }catch(e){}
+  // Fallback: попробуем через WebApp.initDataUnsafe напрямую
+  try{ if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user) return window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
   return null;
 }
 function syncInventoryFromBot(){
