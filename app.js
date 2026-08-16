@@ -1,4 +1,4 @@
-/* NFT UPGRADER */
+/* NFT UPGRADER v2 */
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#07070f'); tg.setBackgroundColor('#07070f'); }
 
