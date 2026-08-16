@@ -563,24 +563,27 @@ function showToast(msg,color){
 
 // ── TELEGRAM USER ──
 function initTelegramUser(){
-  if(!tg||!tg.initDataUnsafe?.user) return;
-  const user = tg.initDataUnsafe.user;
-  const name = user.first_name || 'User';
-  const userId = user.id;
-
-  // Пробуем загрузить аватарку через бот API (localhost)
-  fetch(`http://localhost:3001/photo/${userId}`)
-    .then(r => r.json())
-    .then(d => {
-      if(d.url) document.getElementById('userAvatar').src = d.url;
-      else setInitialsAvatar(name);
+  const user = tg?.initDataUnsafe?.user;
+  const name = user ? (user.first_name || 'User') : 'User';
+  const initials = name.slice(0,2).toUpperCase();
+  const initialsEl = document.getElementById('userInitials');
+  if(initialsEl) initialsEl.textContent = initials;
+  if(!user) return;
+  fetch('https://web-production-dd3cb.up.railway.app/photo/'+user.id)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.url){
+        const img = document.getElementById('userAvatar');
+        if(img){ img.src=d.url; img.style.display='block'; if(initialsEl) initialsEl.style.display='none'; }
+      }
     })
-    .catch(() => setInitialsAvatar(name));
+    .catch(()=>{});
 }
 
 function setInitialsAvatar(name){
-  document.getElementById('userAvatar').src =
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1a3a6e&color=4d9fff&size=80&bold=true&format=svg`;
+  const initials = (name||'U').slice(0,2).toUpperCase();
+  const el = document.getElementById('userInitials');
+  if(el) el.textContent = initials;
 }
 
 // ── SYNC инвентаря с бота ──
