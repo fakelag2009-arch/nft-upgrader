@@ -26,7 +26,7 @@ body::before{content:'';position:fixed;top:-100px;left:50%;transform:translateX(
 
 /* PAGES */
 .pages{position:fixed;top:var(--top-h);left:50%;transform:translateX(-50%);width:100%;max-width:480px;bottom:var(--nav-h);overflow:hidden}
-.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;scrollbar-width:none}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .page::-webkit-scrollbar{display:none}
 .page.active{display:flex}
 
@@ -301,15 +301,14 @@ body::before{content:'';position:fixed;top:-100px;left:50%;transform:translateX(
 .inner-tab:active{transform:scale(0.96)}
 .inner-tab.active{background:rgba(77,159,255,0.1);border-color:rgba(77,159,255,0.35);color:var(--blue)}
 
-.inner-panel{display:none;flex-direction:column;flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:8px}
-.inner-panel::-webkit-scrollbar{display:none}
+.inner-panel{display:none;flex-direction:column;padding-bottom:16px}
 .inner-panel.active{display:flex}
 
 /* Инвентарь внутри панели */
 #ipanel-inventory .inv-empty{padding:24px 20px}
-#ipanel-inventory .inv-grid{padding:8px 14px 8px}
+#ipanel-inventory .inv-grid{padding:8px 14px 80px}
 #ipanel-inventory .inv-go-shop{font-size:12px;padding:8px 20px}
 
 /* Магазин внутри панели */
 #ipanel-shop .shop-tabs{padding:8px 14px 8px}
-#ipanel-shop .shop-grid{padding:0 14px 8px;grid-template-columns:repeat(2,1fr)}
+#ipanel-shop .shop-grid{padding:0 14px 80px;grid-template-columns:repeat(2,1fr)}
