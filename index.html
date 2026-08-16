@@ -96,7 +96,7 @@
             </svg>
           </div>
         </button>
-        <button class="home-menu-btn home-cases-btn" onclick="showToast('\u0421\u043a\u043e\u0440\u043e...', '#ffd700')">
+        <button class="home-menu-btn home-cases-btn" onclick="switchPage('cases')">
           <div class="home-btn-left">
             <div class="home-btn-title">&#1050;&#1045;&#1049;&#1057;&#1067;</div>
             <div class="home-btn-sub">&#1054;&#1090;&#1082;&#1088;&#1099;&#1074;&#1072;&#1081; &#1082;&#1077;&#1081;&#1089;&#1099; &#1080; &#1087;&#1086;&#1083;&#1091;&#1095;&#1072;&#1081; &#1087;&#1088;&#1080;&#1079;&#1099;</div>
@@ -129,6 +129,185 @@
         <div class="inv-grid" id="invGridPage" style="display:none"></div>
       </div>
     </section>
+
+    <!-- CASES PAGE -->
+    <section class="page" id="page-cases">
+      <div class="cases-header">
+        <button class="cases-back" onclick="switchPage('home')">&#8592;</button>
+        <div class="cases-title">&#1050;&#1045;&#1049;&#1057;&#1067;</div>
+        <div style="width:36px"></div>
+      </div>
+      <div class="cases-grid">
+
+        <!-- Бесплатный -->
+        <div class="case-card case-free" onclick="openCase('free')">
+          <div class="case-glow"></div>
+          <div class="case-badge-top">&#1041;&#1077;&#1089;&#1087;&#1083;&#1072;&#1090;&#1085;&#1086;</div>
+          <div class="case-icon-wrap">
+            <svg class="case-box-svg" viewBox="0 0 120 120" fill="none">
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="#0d2a1a"/>
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="none" stroke="#00e676" stroke-width="2"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="#0a2014"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="none" stroke="#00e676" stroke-width="2"/>
+              <rect x="55" y="40" width="10" height="70" fill="#00e676" opacity="0.3"/>
+              <rect x="15" y="61" width="90" height="5" fill="#00e676" opacity="0.2"/>
+              <rect x="40" y="65" width="40" height="24" rx="5" fill="#00e676" opacity="0.15"/>
+              <rect x="44" y="69" width="32" height="16" rx="4" fill="#00e676" opacity="0.3"/>
+              <circle cx="60" cy="77" r="5" fill="#00e676" opacity="0.8"/>
+              <circle cx="25" cy="30" r="4" fill="#00e676" opacity="0.6"/>
+              <circle cx="95" cy="28" r="3" fill="#00e676" opacity="0.5"/>
+              <circle cx="60" cy="22" r="3.5" fill="#00e676" opacity="0.7"/>
+              <path d="M56 22 L57.5 17 L60 22 L65 23.5 L60 25 L57.5 30 L56 25 L51 23.5 Z" fill="#00e676" opacity="0.8"/>
+            </svg>
+          </div>
+          <div class="case-name">&#1045;&#1078;&#1077;&#1076;&#1085;&#1077;&#1074;&#1085;&#1099;&#1081;</div>
+          <div class="case-price free">
+            <span id="caseFreeCd">&#1041;&#1077;&#1089;&#1087;&#1083;&#1072;&#1090;&#1085;&#1086;</span>
+          </div>
+          <div class="case-items-preview">
+            <span>Plush Heart</span>
+            <span>Teddy Bear</span>
+            <span>Cake</span>
+          </div>
+        </div>
+
+        <!-- 30 Stars -->
+        <div class="case-card case-blue" onclick="openCase(30)">
+          <div class="case-glow"></div>
+          <div class="case-icon-wrap">
+            <svg class="case-box-svg" viewBox="0 0 120 120" fill="none">
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="#0a1a3a"/>
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="none" stroke="#4d9fff" stroke-width="2"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="#081228"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="none" stroke="#4d9fff" stroke-width="2"/>
+              <rect x="55" y="40" width="10" height="70" fill="#4d9fff" opacity="0.3"/>
+              <rect x="15" y="61" width="90" height="5" fill="#4d9fff" opacity="0.2"/>
+              <rect x="40" y="65" width="40" height="24" rx="5" fill="#4d9fff" opacity="0.15"/>
+              <rect x="44" y="69" width="32" height="16" rx="4" fill="#4d9fff" opacity="0.3"/>
+              <circle cx="60" cy="77" r="5" fill="#4d9fff" opacity="0.8"/>
+              <circle cx="25" cy="30" r="4" fill="#4d9fff" opacity="0.6"/>
+              <circle cx="95" cy="28" r="3" fill="#4d9fff" opacity="0.5"/>
+              <path d="M56 22 L57.5 17 L60 22 L65 23.5 L60 25 L57.5 30 L56 25 L51 23.5 Z" fill="#4d9fff" opacity="0.9"/>
+            </svg>
+          </div>
+          <div class="case-name">&#1054;&#1073;&#1099;&#1095;&#1085;&#1099;&#1081;</div>
+          <div class="case-price">30 &#11088;</div>
+          <div class="case-items-preview">
+            <span>Trophy</span>
+            <span>Noodles</span>
+            <span>Liberty</span>
+          </div>
+        </div>
+
+        <!-- 50 Stars -->
+        <div class="case-card case-purple" onclick="openCase(50)">
+          <div class="case-glow"></div>
+          <div class="case-icon-wrap">
+            <svg class="case-box-svg" viewBox="0 0 120 120" fill="none">
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="#1a0a3a"/>
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="none" stroke="#aa00ff" stroke-width="2"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="#120828"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="none" stroke="#aa00ff" stroke-width="2"/>
+              <rect x="55" y="40" width="10" height="70" fill="#aa00ff" opacity="0.3"/>
+              <rect x="15" y="61" width="90" height="5" fill="#aa00ff" opacity="0.2"/>
+              <rect x="40" y="65" width="40" height="24" rx="5" fill="#aa00ff" opacity="0.15"/>
+              <rect x="44" y="69" width="32" height="16" rx="4" fill="#aa00ff" opacity="0.3"/>
+              <circle cx="60" cy="77" r="5" fill="#cc44ff" opacity="0.8"/>
+              <circle cx="25" cy="30" r="4" fill="#aa00ff" opacity="0.6"/>
+              <circle cx="95" cy="28" r="3" fill="#aa00ff" opacity="0.5"/>
+              <path d="M56 22 L57.5 17 L60 22 L65 23.5 L60 25 L57.5 30 L56 25 L51 23.5 Z" fill="#cc44ff" opacity="0.9"/>
+            </svg>
+          </div>
+          <div class="case-name">&#1053;&#1077;&#1086;&#1073;&#1099;&#1095;&#1085;&#1099;&#1081;</div>
+          <div class="case-price">50 &#11088;</div>
+          <div class="case-items-preview">
+            <span>Backpack</span>
+            <span>Blue Socks</span>
+            <span>Coins</span>
+          </div>
+        </div>
+
+        <!-- 100 Stars -->
+        <div class="case-card case-red" onclick="openCase(100)">
+          <div class="case-glow"></div>
+          <div class="case-badge-top hot">&#1061;&#1048;&#1058;</div>
+          <div class="case-icon-wrap">
+            <svg class="case-box-svg" viewBox="0 0 120 120" fill="none">
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="#2a0a0a"/>
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="none" stroke="#ff4757" stroke-width="2"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="#1a0808"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="none" stroke="#ff4757" stroke-width="2"/>
+              <rect x="55" y="40" width="10" height="70" fill="#ff4757" opacity="0.3"/>
+              <rect x="15" y="61" width="90" height="5" fill="#ff4757" opacity="0.2"/>
+              <rect x="40" y="65" width="40" height="24" rx="5" fill="#ff4757" opacity="0.15"/>
+              <rect x="44" y="69" width="32" height="16" rx="4" fill="#ff4757" opacity="0.3"/>
+              <circle cx="60" cy="77" r="5" fill="#ff6b7a" opacity="0.8"/>
+              <circle cx="25" cy="30" r="4" fill="#ff4757" opacity="0.6"/>
+              <circle cx="95" cy="28" r="3" fill="#ff4757" opacity="0.5"/>
+              <path d="M56 22 L57.5 17 L60 22 L65 23.5 L60 25 L57.5 30 L56 25 L51 23.5 Z" fill="#ff6b7a" opacity="0.9"/>
+            </svg>
+          </div>
+          <div class="case-name">&#1056;&#1077;&#1076;&#1082;&#1080;&#1081;</div>
+          <div class="case-price">100 &#11088;</div>
+          <div class="case-items-preview">
+            <span>Joint</span>
+            <span>Watch</span>
+            <span>Sunglasses</span>
+          </div>
+        </div>
+
+        <!-- 500 Stars -->
+        <div class="case-card case-gold" onclick="openCase(500)">
+          <div class="case-glow"></div>
+          <div class="case-badge-top legendary">&#1051;&#1045;&#1043;&#1045;&#1053;&#1044;&#1040;</div>
+          <div class="case-icon-wrap">
+            <svg class="case-box-svg" viewBox="0 0 120 120" fill="none">
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="#2a1f00"/>
+              <rect x="15" y="55" width="90" height="55" rx="8" fill="none" stroke="#ffd700" stroke-width="2.5"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="#1a1400"/>
+              <rect x="15" y="40" width="90" height="22" rx="7" fill="none" stroke="#ffd700" stroke-width="2.5"/>
+              <rect x="55" y="40" width="10" height="70" fill="#ffd700" opacity="0.4"/>
+              <rect x="15" y="61" width="90" height="5" fill="#ffd700" opacity="0.25"/>
+              <rect x="40" y="65" width="40" height="24" rx="5" fill="#ffd700" opacity="0.2"/>
+              <rect x="44" y="69" width="32" height="16" rx="4" fill="#ffd700" opacity="0.35"/>
+              <circle cx="60" cy="77" r="5" fill="#ffd700" opacity="0.9"/>
+              <circle cx="25" cy="30" r="4" fill="#ffd700" opacity="0.7"/>
+              <circle cx="95" cy="28" r="3.5" fill="#ffd700" opacity="0.6"/>
+              <circle cx="60" cy="22" r="3" fill="#ffd700" opacity="0.8"/>
+              <path d="M56 22 L57.5 16 L60 22 L66 23.5 L60 25 L57.5 31 L56 25 L50 23.5 Z" fill="#ffd700"/>
+            </svg>
+          </div>
+          <div class="case-name">&#1051;&#1077;&#1075;&#1077;&#1085;&#1076;&#1072;&#1088;&#1085;&#1099;&#1081;</div>
+          <div class="case-price gold">500 &#11088;</div>
+          <div class="case-items-preview">
+            <span>Watch</span>
+            <span>Sunglasses</span>
+            <span>+Stars</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CASE OPEN OVERLAY -->
+    <div class="case-open-overlay" id="caseOpenOverlay">
+      <div class="case-open-box">
+        <div class="case-open-title" id="caseOpenTitle">&#1054;&#1090;&#1082;&#1088;&#1099;&#1074;&#1072;&#1077;&#1084;...</div>
+        <div class="case-reel-wrap">
+          <div class="case-reel-arrow"></div>
+          <div class="case-reel-container">
+            <div class="case-reel" id="caseReel"></div>
+          </div>
+        </div>
+        <div class="case-open-result" id="caseOpenResult" style="display:none">
+          <div class="case-result-glow" id="caseResultGlow"></div>
+          <img class="case-result-img" id="caseResultImg" src="" alt=""/>
+          <div class="case-result-name" id="caseResultName"></div>
+          <div class="case-result-val" id="caseResultVal"></div>
+          <button class="case-result-btn" onclick="closeCaseOpen()">&#1054;&#1090;&#1083;&#1080;&#1095;&#1085;&#1086;!</button>
+        </div>
+      </div>
+    </div>
 
     <!-- UPGRADE PAGE -->
     <section class="page" id="page-upgrade">
