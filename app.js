@@ -644,7 +644,7 @@ initTelegramUser();
 connectSSE();
 renderShop();
 renderInventory();
-switchPage('upgrade');
+switchPage('home');
 
 // Проверяем URL параметры при открытии
 const urlParams = new URLSearchParams(window.location.search);
