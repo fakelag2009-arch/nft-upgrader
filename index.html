@@ -25,10 +25,7 @@
       <div class="avatar"><img id="userAvatar" src="https://api.dicebear.com/7.x/thumbs/svg?seed=tg&backgroundColor=1a1a2e" alt="av"/></div>
       <div class="topbar-info">
         <div class="topbar-balance" id="userBalance">0 ⭐</div>
-        <div style="display:flex;gap:6px">
-          <button class="topup-btn" onclick="showPromo()" style="background:linear-gradient(135deg,#1a6fff,#0d47c8)">🎟 Промо</button>
-          <button class="topup-btn" onclick="showTopup()">+ Пополнить</button>
-        </div>
+        <button class="topup-btn" onclick="showTopup()">+ Пополнить</button>
       </div>
     </div>
   </header>
@@ -123,6 +120,11 @@
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
+    <button class="nav-btn promo-nav-btn" id="nav-promo" onclick="showPromo()">
+      <div class="promo-glow-ring"></div>
+      <span class="nav-icon">🎟</span>
+      <span class="nav-label">Промокод</span>
+    </button>
     <button class="nav-btn" id="nav-home" onclick="switchPage('home')">
       <span class="nav-icon">🏠</span>
       <span class="nav-label">Главная</span>
@@ -222,24 +224,29 @@
   </div>
 </div>
 
+<script src="app.js"></script>
+
 <!-- PROMO MODAL -->
-<div class="modal-overlay" id="promoModal" onclick="if(event.target===this)closePromo()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:flex-end;justify-content:center">
-  <div class="modal" style="width:100%;max-width:480px;background:#12121f;border-radius:20px 20px 0 0;padding:24px">
-    <div class="modal-handle" style="width:40px;height:4px;background:#333;border-radius:2px;margin:0 auto 20px"></div>
-    <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <span style="font-size:18px;font-weight:700;color:#fff">🎟 Промокод</span>
-      <button onclick="closePromo()" style="background:none;border:none;color:#888;font-size:20px;cursor:pointer">✕</button>
+<div class="promo-overlay" id="promoModal" onclick="if(event.target===this)closePromo()">
+  <div class="promo-sheet">
+    <div class="promo-particles" id="promoParticles"></div>
+    <div class="promo-handle"></div>
+    <div class="promo-icon-wrap">
+      <div class="promo-icon-bg"></div>
+      <span class="promo-icon-emoji">🎟</span>
     </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <input id="promoInput" type="text" placeholder="Введи промокод..." autocomplete="off" autocapitalize="characters"
-        style="background:#1a1a2e;border:1px solid #333;border-radius:12px;padding:14px 16px;color:#fff;font-size:16px;width:100%;box-sizing:border-box;outline:none;text-transform:uppercase"/>
-      <button onclick="activatePromo()" style="background:linear-gradient(135deg,#1a6fff,#0d47c8);border:none;color:#fff;padding:14px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">
-        Активировать
-      </button>
-      <div id="promoResult" style="text-align:center;font-size:14px;min-height:20px"></div>
+    <h2 class="promo-title">Промокод</h2>
+    <p class="promo-subtitle">Введи промокод чтобы получить Stars</p>
+    <div class="promo-input-wrap">
+      <input id="promoInput" type="text" class="promo-input" placeholder="ВВЕДИ КОД" autocomplete="off" autocapitalize="characters" oninput="this.value=this.value.toUpperCase()"/>
+      <div class="promo-input-glow"></div>
     </div>
+    <button class="promo-btn" onclick="activatePromo()">
+      <span class="promo-btn-text">Активировать</span>
+      <span class="promo-btn-shine"></span>
+    </button>
+    <div id="promoResult" class="promo-result"></div>
   </div>
 </div>
-<script src="app.js?v=16"></script>
 </body>
 </html>
