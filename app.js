@@ -572,6 +572,7 @@ function switchPage(name){
   if(nb)nb.classList.add('active');
   if(name==='upgrade')renderShop();
   if(name==='inventory')renderInventoryPage();
+  if(name==='cases')updateFreeCaseCd();
 }
 
 // ── TOAST ──
@@ -631,6 +632,153 @@ function syncInventoryFromBot(){
       renderInventory();
     })
     .catch(()=>{});
+}
+
+// ── CASES ──
+const CASE_POOLS = {
+  free:  [1,2,3,4],           // Plush Heart, Teddy Bear, Cake, Trophy
+  30:    [3,4,5,6,7,8],       // Common + uncommon
+  50:    [5,6,7,8,9,10,11],   // Uncommon + rare
+  100:   [9,10,11,12,13],     // Rare
+  500:   [12,13,14]           // Legendary
+};
+const CASE_NAMES = {
+  free: '\u0415\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u044b\u0439',
+  30:   '\u041e\u0431\u044b\u0447\u043d\u044b\u0439',
+  50:   '\u041d\u0435\u043e\u0431\u044b\u0447\u043d\u044b\u0439',
+  100:  '\u0420\u0435\u0434\u043a\u0438\u0439',
+  500:  '\u041b\u0435\u0433\u0435\u043d\u0434\u0430\u0440\u043d\u044b\u0439'
+};
+var lastFreeCaseTime = parseInt(localStorage.getItem('lastFreeCase')||'0');
+
+function updateFreeCaseCd(){
+  var el = document.getElementById('caseFreeCd');
+  if(!el) return;
+  var now = Date.now();
+  var diff = (lastFreeCaseTime + 86400000) - now;
+  if(diff <= 0){
+    el.textContent = '\u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u043e';
+    return;
+  }
+  var h = Math.floor(diff/3600000);
+  var m = Math.floor((diff%3600000)/60000);
+  var s = Math.floor((diff%60000)/1000);
+  el.textContent = (h>0?h+'\u0447 ':'') + (m>0?m+'\u043c ':'') + s+'\u0441';
+  setTimeout(updateFreeCaseCd, 1000);
+}
+
+function openCase(type){
+  // Проверки
+  if(type === 'free'){
+    var now = Date.now();
+    if(lastFreeCaseTime && (now - lastFreeCaseTime) < 86400000){
+      showToast('\u041f\u043e\u0434\u043e\u0436\u0434\u0438 \u0434\u043e \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0435\u0433\u043e \u043a\u0435\u0439\u0441\u0430', '#ff4757');
+      return;
+    }
+  } else {
+    var cost = parseInt(type);
+    if(S.balance < cost){
+      var need = cost - S.balance;
+      showToast('\u041d\u0443\u0436\u043d\u043e \u0435\u0449\u0451 ' + need + ' \u2b50', '#ff4757');
+      setTimeout(function(){ setAmt(cost); showTopup(); }, 600);
+      return;
+    }
+    S.balance -= cost;
+    saveState(); updateBalance();
+  }
+
+  // Получаем пул предметов
+  var pool = CASE_POOLS[type] || CASE_POOLS[30];
+  // Взвешенный рандом — ближе к концу пула = реже
+  var weights = pool.map(function(id,i){ return pool.length - i; });
+  var totalW = weights.reduce(function(a,b){ return a+b; }, 0);
+  var rand = Math.random() * totalW;
+  var winItemId = pool[0];
+  for(var i=0;i<pool.length;i++){
+    rand -= weights[i];
+    if(rand <= 0){ winItemId = pool[i]; break; }
+  }
+  var winItem = ITEMS.find(function(it){ return it.id === winItemId; });
+  if(!winItem) return;
+
+  // Запускаем анимацию
+  var overlay = document.getElementById('caseOpenOverlay');
+  var reel = document.getElementById('caseReel');
+  var titleEl = document.getElementById('caseOpenTitle');
+  var resultEl = document.getElementById('caseOpenResult');
+
+  overlay.classList.add('active');
+  resultEl.style.display = 'none';
+  titleEl.textContent = '\u041e\u0442\u043a\u0440\u044b\u0432\u0430\u0435\u043c ' + CASE_NAMES[type] + '...';
+
+  // Заполняем рулетку
+  reel.innerHTML = '';
+  reel.style.transition = 'none';
+  reel.style.transform = 'translateX(0)';
+
+  var reelItems = [];
+  // 40 предметов + выигрышный на позиции ~34
+  for(var j=0;j<40;j++){
+    var rid = pool[Math.floor(Math.random()*pool.length)];
+    reelItems.push(rid);
+  }
+  var winPos = 33;
+  reelItems[winPos] = winItemId;
+
+  reelItems.forEach(function(id){
+    var item = ITEMS.find(function(it){ return it.id===id; });
+    var div = document.createElement('div');
+    div.className = 'case-reel-item';
+    var rarity = item ? RARITY[item.rarity] : null;
+    if(rarity) div.style.borderColor = rarity.color + '66';
+    div.innerHTML = '<img src="'+(item?item.img:'')+'" alt=""><span>'+(item?item.name:'')+'</span>';
+    reel.appendChild(div);
+  });
+
+  // Анимация прокрутки
+  var itemW = 98; // 90px + 8px gap
+  var centerOffset = Math.floor(window.innerWidth/2) - 45;
+  var targetX = -(winPos * itemW - centerOffset);
+
+  setTimeout(function(){
+    reel.style.transition = 'transform 5s cubic-bezier(0.12, 0.8, 0.3, 1)';
+    reel.style.transform = 'translateX(' + targetX + 'px)';
+  }, 100);
+
+  // Показываем результат
+  setTimeout(function(){
+    // Подсвечиваем победителя
+    var items = reel.querySelectorAll('.case-reel-item');
+    if(items[winPos]) items[winPos].classList.add('highlight');
+    tg?.HapticFeedback?.notificationOccurred('success');
+
+    setTimeout(function(){
+      // Показываем результат
+      resultEl.style.display = 'block';
+      document.getElementById('caseResultImg').src = winItem.img;
+      document.getElementById('caseResultName').textContent = winItem.name;
+      document.getElementById('caseResultVal').textContent = winItem.value.toLocaleString() + ' \u2b50';
+      var glow = document.getElementById('caseResultGlow');
+      if(glow){ glow.style.background = 'radial-gradient(circle,' + RARITY[winItem.rarity].color + ',transparent)'; }
+
+      // Добавляем в инвентарь
+      invAdd(winItem.id);
+      renderInventoryPage();
+
+      // Бесплатный кейс — запоминаем время
+      if(type === 'free'){
+        lastFreeCaseTime = Date.now();
+        localStorage.setItem('lastFreeCase', lastFreeCaseTime);
+        updateFreeCaseCd();
+      }
+
+      showToast('\u2728 ' + winItem.name + ' \u2014 \u043f\u043e\u0432\u0435\u0437\u043b\u043e!', RARITY[winItem.rarity].color);
+    }, 800);
+  }, 5200);
+}
+
+function closeCaseOpen(){
+  document.getElementById('caseOpenOverlay').classList.remove('active');
 }
 
 // ── PROMO ──
