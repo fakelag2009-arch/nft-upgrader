@@ -431,3 +431,35 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
   0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 10px rgba(170,0,255,0.7)); }
   50% { transform: scale(1.1) rotate(-5deg); filter: drop-shadow(0 0 18px rgba(200,100,255,1)); }
 }
+
+/* ── HOME BUTTONS ENHANCED ── */
+.home-upgrade-btn {
+  background: linear-gradient(135deg, #0a2010 0%, #061508 100%) !important;
+  border: 1.5px solid rgba(0,230,118,0.5) !important;
+  box-shadow: 0 0 30px rgba(0,230,118,0.1), 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(0,230,118,0.15) !important;
+}
+.home-upgrade-btn:active { box-shadow: 0 0 15px rgba(0,230,118,0.2) !important; }
+
+.home-inv-btn {
+  background: linear-gradient(135deg, #2a1500 0%, #180c00 100%) !important;
+  border: 1.5px solid rgba(255,165,0,0.5) !important;
+  box-shadow: 0 0 30px rgba(255,165,0,0.1), 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,165,0,0.15) !important;
+}
+.home-inv-btn .home-btn-title { color: #ffa500 !important; text-shadow: 0 0 16px rgba(255,165,0,0.6) !important; }
+.home-inv-btn svg { filter: drop-shadow(0 0 12px rgba(255,165,0,0.5)); animation: chestFloat 3s ease-in-out infinite; }
+@keyframes chestFloat {
+  0%,100%{ transform: translateY(0) rotate(-2deg); }
+  50%{ transform: translateY(-5px) rotate(2deg); }
+}
+
+.home-promo-btn {
+  background: linear-gradient(135deg, #1a0030 0%, #0d0020 100%) !important;
+  border: 1.5px solid rgba(170,0,255,0.5) !important;
+  box-shadow: 0 0 30px rgba(170,0,255,0.1), 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(170,0,255,0.15) !important;
+}
+.home-promo-btn .home-btn-title { color: #cc44ff !important; text-shadow: 0 0 16px rgba(170,0,255,0.6) !important; }
+.home-promo-btn svg { filter: drop-shadow(0 0 12px rgba(170,0,255,0.6)); animation: ticketFloat 2.5s ease-in-out infinite; }
+@keyframes ticketFloat {
+  0%,100%{ transform: translateY(0) rotate(3deg); }
+  50%{ transform: translateY(-6px) rotate(-3deg); }
+}
