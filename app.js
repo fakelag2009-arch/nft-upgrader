@@ -241,7 +241,7 @@ function closeBuyModalOutside(e){ if(e.target===document.getElementById('buyModa
 
 function confirmBuy(id){
   const item=ITEMS.find(i=>i.id===id);if(!item)return;
-  // Сначала списываем с баланса если хватает
+  // Если хватает баланса — списываем
   if(S.balance >= item.value){
     S.balance -= item.value;
     invAdd(item.id);updateBalance();renderShop();renderInventory();closeBuyModal();
@@ -249,13 +249,14 @@ function confirmBuy(id){
     tg?.HapticFeedback?.notificationOccurred('success');
     return;
   }
-  // Если баланса не хватает — счёт через Telegram
-  if(tg&&tg.initData){
-    closeBuyModal();
-    tg.sendData(JSON.stringify({action:'buy',itemId:item.id,itemName:item.name,price:item.value}));
-    showToast(`⭐ Счёт отправлен!`);return;
-  }
-  showToast('❌ Недостаточно Stars!');closeBuyModal();
+  // Баланса не хватает — открываем пополнение с нужной суммой
+  closeBuyModal();
+  const need = item.value - S.balance;
+  showToast(`❌ Нужно ещё ${need} ⭐ — пополни баланс`,'#ff4757');
+  setTimeout(()=>{
+    setAmt(item.value);
+    showTopup();
+  }, 600);
 }
 
 function onPurchaseSuccess(itemId){
