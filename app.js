@@ -578,8 +578,9 @@ function syncInventoryFromBot(){
 // ── PROMO ──
 function showPromo(){
   const modal = document.getElementById('promoModal');
+  const sheet = document.getElementById('promoSheet');
   modal.style.display = 'flex';
-  requestAnimationFrame(()=>modal.classList.add('open'));
+  requestAnimationFrame(()=>{ if(sheet) sheet.style.transform='translateY(0)'; });
   document.getElementById('promoInput').value = '';
   document.getElementById('promoResult').textContent = '';
   document.getElementById('promoResult').style.color = '';
@@ -588,7 +589,8 @@ function showPromo(){
 }
 function closePromo(){
   const modal = document.getElementById('promoModal');
-  modal.classList.remove('open');
+  const sheet = document.getElementById('promoSheet');
+  if(sheet) sheet.style.transform='translateY(100%)';
   setTimeout(()=>{ modal.style.display='none'; }, 350);
 }
 function promoParticles(){
