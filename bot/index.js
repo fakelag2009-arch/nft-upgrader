@@ -156,7 +156,73 @@ bot.onText(/\/addnft(?:\s+(@\S+))?/,async(msg,match)=>{
   );
 });
 
-// ── /myid — чтобы узнать свой Telegram ID ──
+// ── /addstars @username количество ──
+bot.onText(/\/addstars(?:\s+(@\S+))?(?:\s+(\d+))?/, async (msg, match) => {
+  const adminId = msg.from.id, chatId = msg.chat.id;
+  if(!isAdmin(adminId)){ bot.sendMessage(chatId,'❌ Нет прав.'); return; }
+
+  const username = match[1];
+  const amount   = parseInt(match[2]);
+
+  if(!username || !amount || amount < 1){
+    bot.sendMessage(chatId,
+      `⚠️ Использование:\n\`/addstars @username количество\`\n\nПример: \`/addstars @durov 500\``,
+      {parse_mode:'Markdown'}
+    );
+    return;
+  }
+
+  try{
+    const cleanUsername = username.replace('@','').toLowerCase();
+    let targetId = knownUsers[cleanUsername];
+
+    if(!targetId){
+      try{
+        const targetChat = await bot.getChat(username);
+        targetId = targetChat.id;
+        if(targetChat.username) knownUsers[targetChat.username.toLowerCase()] = targetId;
+      } catch(e){
+        bot.sendMessage(chatId,
+          `❌ Пользователь *${username}* не найден.\n\nПопроси его написать /start боту сначала.`,
+          {parse_mode:'Markdown'}
+        );
+        return;
+      }
+    }
+
+    // Начисляем баланс
+    if(!userBalances[targetId]) userBalances[targetId] = 0;
+    userBalances[targetId] += amount;
+
+    // Уведомляем админа
+    bot.sendMessage(chatId,
+      `✅ *+${amount} ⭐* зачислено на баланс *${username}*!\n\nНовый баланс: *${userBalances[targetId]} ⭐*`,
+      {parse_mode:'Markdown'}
+    );
+
+    // Уведомляем пользователя — открываем мини апп с параметром
+    const starsUrl = `${WEBAPP_URL}?stars=${amount}`;
+    bot.sendMessage(targetId,
+      `⭐ *Вам начислено ${amount} Stars!*\n\nНажми кнопку чтобы получить на баланс:`,
+      { parse_mode:'Markdown',
+        reply_markup:{inline_keyboard:[[{text:`⭐ Получить ${amount} Stars!`, web_app:{url:starsUrl}}]]}
+      }
+    );
+
+    broadcast({type:'balance_add', userId:targetId, stars:amount});
+    console.log(`⭐ AddStars: ${amount} → ${username} (${targetId})`);
+
+  } catch(e){
+    bot.sendMessage(chatId,`❌ Ошибка: ${e.message}`);
+  }
+});
+
+// ── /addstars без параметров — выдать себе (только админ) ──
+bot.onText(/\/mybalance/, async (msg) => {
+  const chatId = msg.chat.id;
+  const bal = userBalances[chatId] || 0;
+  bot.sendMessage(chatId, `⭐ Твой баланс: *${bal} Stars*`, {parse_mode:'Markdown'});
+});
 bot.onText(/\/myid/,(msg)=>{
   bot.sendMessage(msg.chat.id,`🆔 Твой Telegram ID: \`${msg.from.id}\`\n\nДобавь его в ADMINS в боте.`,{parse_mode:'Markdown'});
 });
@@ -305,8 +371,10 @@ app.listen(PORT,()=>{
 });
 
 bot.setMyCommands([
-  {command:'start',   description:'🏠 Главное меню'},
-  {command:'upgrade', description:'🎰 Открыть апгрейдер'},
-  {command:'myid',    description:'🆔 Узнать свой ID'},
-  {command:'addnft',  description:'🎁 Выдать подарок (только админ)'},
+  {command:'start',     description:'🏠 Главное меню'},
+  {command:'upgrade',   description:'🎰 Открыть апгрейдер'},
+  {command:'myid',      description:'🆔 Узнать свой ID'},
+  {command:'mybalance', description:'⭐ Мой баланс'},
+  {command:'addnft',    description:'🎁 Выдать подарок (админ)'},
+  {command:'addstars',  description:'⭐ Выдать Stars (админ)'},
 ]);

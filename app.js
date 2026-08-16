@@ -582,20 +582,29 @@ renderShop();
 renderInventory();
 switchPage('upgrade');
 
-// Проверяем URL параметр ?gift= (выдача подарка от админа)
+// Проверяем URL параметры при открытии
 const urlParams = new URLSearchParams(window.location.search);
+
+// ?gift=ID — получить подарок от админа
 const giftId = parseInt(urlParams.get('gift'));
 if(giftId){
   const item = ITEMS.find(i=>i.id===giftId);
   if(item){
     invAdd(giftId);
     renderInventory();
-    setTimeout(()=>{
-      showToast(`🎁 Получен подарок: ${item.name}!`, '#ffd700');
-    }, 500);
-    // Убираем параметр из URL
+    setTimeout(()=>showToast(`🎁 Получен: ${item.name}!`,'#ffd700'),500);
     history.replaceState(null,'',window.location.pathname);
   }
+}
+
+// ?stars=N — получить звёзды на баланс
+const starsGift = parseInt(urlParams.get('stars'));
+if(starsGift && starsGift > 0){
+  S.balance += starsGift;
+  saveState();
+  updateBalance();
+  setTimeout(()=>showToast(`⭐ +${starsGift} Stars зачислено!`,'#ffd700'),500);
+  history.replaceState(null,'',window.location.pathname);
 }
 
 setTimeout(syncInventoryFromBot, 1000);
