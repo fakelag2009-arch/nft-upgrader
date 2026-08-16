@@ -294,3 +294,22 @@ body::before{content:'';position:fixed;top:-100px;left:50%;transform:translateX(
 .topup-pay-btn:active{transform:scale(0.97)}
 .topup-pay-btn span:last-child{background:rgba(255,255,255,0.15);border-radius:10px;padding:3px 12px;font-size:15px}
 .topup-footer{font-size:11px;color:var(--text3);text-align:center;line-height:1.6}
+
+/* ── INNER TABS (Инвентарь / Магазин внутри апгрейда) ── */
+.inner-tabs{display:flex;gap:8px;padding:12px 14px 0;flex-shrink:0}
+.inner-tab{flex:1;height:44px;border-radius:14px;background:var(--card);border:1.5px solid var(--border);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.inner-tab:active{transform:scale(0.96)}
+.inner-tab.active{background:rgba(77,159,255,0.1);border-color:rgba(77,159,255,0.35);color:var(--blue)}
+
+.inner-panel{display:none;flex-direction:column;flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:8px}
+.inner-panel::-webkit-scrollbar{display:none}
+.inner-panel.active{display:flex}
+
+/* Инвентарь внутри панели */
+#ipanel-inventory .inv-empty{padding:24px 20px}
+#ipanel-inventory .inv-grid{padding:8px 14px 8px}
+#ipanel-inventory .inv-go-shop{font-size:12px;padding:8px 20px}
+
+/* Магазин внутри панели */
+#ipanel-shop .shop-tabs{padding:8px 14px 8px}
+#ipanel-shop .shop-grid{padding:0 14px 8px;grid-template-columns:repeat(2,1fr)}

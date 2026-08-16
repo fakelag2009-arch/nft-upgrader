@@ -267,7 +267,9 @@ function renderInventory(){
 
 function useFromInventory(id){
   const item=ITEMS.find(i=>i.id===id);if(!item)return;
-  S.yoursItem=item;updateUI();renderInventory();switchPage('upgrade');
+  S.yoursItem=item;updateUI();renderInventory();
+  // Прокручиваем наверх к рулетке
+  document.getElementById('page-upgrade').scrollTo({top:0,behavior:'smooth'});
   tg?.HapticFeedback?.selectionChanged();
   showToast(`⬆ ${item.name} выбран`);
 }
@@ -453,6 +455,17 @@ function buyStars(amount){
   showToast(`✅ +${amount} ⭐ добавлено!`,'#ffd700');
 }
 
+// ── INNER TABS ──
+function switchInnerTab(name){
+  document.querySelectorAll('.inner-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.inner-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('itab-'+name).classList.add('active');
+  document.getElementById('ipanel-'+name).classList.add('active');
+  if(name==='shop')renderShop();
+  if(name==='inventory')renderInventory();
+  tg?.HapticFeedback?.selectionChanged();
+}
+
 // ── PAGE SWITCH ──
 function switchPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -488,6 +501,6 @@ updateBalance();
 updateInvBadge();
 initTelegramUser();
 connectSSE();
-
-// По умолчанию — Апгрейд
+renderShop();
+renderInventory();
 switchPage('upgrade');

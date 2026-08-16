@@ -77,10 +77,43 @@
     <div class="action-bar">
       <button class="action-icon-btn" onclick="resetSlots()">↺</button>
       <button class="upgrade-btn" id="upgradeBtn" onclick="startUpgrade()" disabled>
-        <span class="upgrade-btn-text">Апгрейд</span>
+        <span class="upgrade-btn-text">⬆ Апгрейд</span>
         <span class="upgrade-btn-sub" id="upgradeBtnSub">Шанс выигрыша 0%</span>
       </button>
     </div>
+
+    <!-- Вкладки Инвентарь / Магазин внутри страницы -->
+    <div class="inner-tabs">
+      <button class="inner-tab active" id="itab-inventory" onclick="switchInnerTab('inventory')">
+        <span>🎒</span> Инвентарь
+      </button>
+      <button class="inner-tab" id="itab-shop" onclick="switchInnerTab('shop')">
+        <span>🛍</span> Магазин
+      </button>
+    </div>
+
+    <!-- Инвентарь внутри апгрейда -->
+    <div class="inner-panel active" id="ipanel-inventory">
+      <div class="inv-empty" id="invEmpty">
+        <div style="font-size:40px">📦</div>
+        <p>Инвентарь пуст</p>
+        <button class="inv-go-shop" onclick="switchInnerTab('shop')">🛍 В магазин</button>
+      </div>
+      <div class="inv-grid" id="invGrid" style="display:none"></div>
+    </div>
+
+    <!-- Магазин внутри апгрейда -->
+    <div class="inner-panel" id="ipanel-shop">
+      <div class="shop-tabs">
+        <button class="shop-tab active" onclick="setShopTab('all',this)">Все</button>
+        <button class="shop-tab" onclick="setShopTab('common',this)">Обычные</button>
+        <button class="shop-tab" onclick="setShopTab('uncommon',this)">Необычные</button>
+        <button class="shop-tab" onclick="setShopTab('rare',this)">Редкие</button>
+        <button class="shop-tab" onclick="setShopTab('legendary',this)">Легенд.</button>
+      </div>
+      <div class="shop-grid" id="shopGrid"></div>
+    </div>
+
   </section>
 
   <section class="page" id="page-shop">
@@ -116,16 +149,6 @@
       <div class="nav-active-pill"></div>
       <span class="nav-icon nav-upgrade-icon">⬆</span>
       <span class="nav-label">Апгрейд</span>
-    </div>
-  </button>
-  <button class="nav-btn" id="nav-shop" onclick="switchPage('shop')">
-    <div class="nav-btn-inner"><span class="nav-icon">🛍</span><span class="nav-label">Магазин</span></div>
-  </button>
-  <button class="nav-btn" id="nav-inventory" onclick="switchPage('inventory')">
-    <div class="nav-btn-inner" style="position:relative">
-      <span class="nav-icon">🎒</span>
-      <span class="nav-label">Инвентарь</span>
-      <span class="nav-badge" id="invBadge" style="display:none">0</span>
     </div>
   </button>
 </nav>
