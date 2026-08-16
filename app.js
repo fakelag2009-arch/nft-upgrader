@@ -624,11 +624,12 @@ if(starsGift && starsGift > 0){
 // Загружаем баланс и инвентарь с сервера
 function syncFromServer(){
   const userId = getTgUserId();
+  showToast('uid:'+(userId||'null'),'#4d9fff');
   if(!userId){ setTimeout(syncFromServer, 500); return; }
   fetch('https://web-production-dd3cb.up.railway.app/balance/'+userId)
     .then(r=>r.json())
-    .then(d=>{ if(d.balance>0){ S.balance=d.balance; saveState(); updateBalance(); showToast('+'+d.balance+' ⭐ на балансе','#ffd700'); } })
-    .catch(()=>{});
+    .then(d=>{ S.balance=d.balance||0; saveState(); updateBalance(); showToast(d.balance+' ⭐ баланс','#ffd700'); })
+    .catch(e=>showToast('err:'+e.message,'#ff4757'));
   syncInventoryFromBot();
 }
-setTimeout(syncFromServer, 800);
+setTimeout(syncFromServer, 1000);
