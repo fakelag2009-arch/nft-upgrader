@@ -1,4 +1,4 @@
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
+﻿*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
 :root{
   --bg:#07070f;--bg2:#0d0d1a;--bg3:#13131f;--card:#111120;--card2:#18182a;
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
@@ -322,3 +322,30 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 
 /* ── AVATAR ENHANCED ── */
 .avatar{border:2px solid transparent!important;background:linear-gradient(#07070f,#07070f) padding-box,linear-gradient(135deg,#4d9fff,#aa00ff) border-box!important;box-shadow:0 0 12px rgba(77,159,255,0.3)!important}
+
+/* ── CASES BUTTON ── */
+.home-cases-btn {
+  background: linear-gradient(135deg, #1a1500 0%, #100e00 100%);
+  border: 1.5px solid rgba(255,215,0,0.4);
+  box-shadow: 0 0 30px rgba(255,215,0,0.08), 0 4px 20px rgba(0,0,0,0.5);
+  min-height: 90px;
+  position: relative;
+  overflow: hidden;
+}
+.home-cases-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 0% 50%, rgba(255,215,0,0.07) 0%, transparent 60%);
+  pointer-events: none;
+}
+.home-cases-btn::after {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.08), transparent);
+  animation: casesShine 3.5s ease-in-out infinite;
+}
+@keyframes casesShine { 0%{left:-100%} 50%,100%{left:150%} }
+.home-cases-btn .home-btn-title {
+  color: #ffd700;
+  text-shadow: 0 0 16px rgba(255,215,0,0.6);
+}
