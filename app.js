@@ -607,4 +607,14 @@ if(starsGift && starsGift > 0){
   history.replaceState(null,'',window.location.pathname);
 }
 
-setTimeout(syncInventoryFromBot, 1000);
+// агружаем баланс и инвентарь с сервера
+function syncFromServer(){
+  if(!tg || !tg.initDataUnsafe?.user) return;
+  const userId = tg.initDataUnsafe.user.id;
+  fetch('https://web-production-dd3cb.up.railway.app/balance/'+userId)
+    .then(r=>r.json())
+    .then(d=>{ if(d.balance>0){ S.balance=d.balance; saveState(); updateBalance(); showToast('+'+d.balance+' stars на балансе','#ffd700'); } })
+    .catch(()=>{});
+  syncInventoryFromBot();
+}
+setTimeout(syncFromServer, 1000);
