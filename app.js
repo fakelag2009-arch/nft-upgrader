@@ -1,6 +1,15 @@
 /* NFT UPGRADER v3 */
 const tg = window.Telegram?.WebApp;
-if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#07070f'); tg.setBackgroundColor('#07070f'); }
+if (tg) {
+  tg.ready();
+  tg.expand();
+  tg.setHeaderColor('#07070f');
+  tg.setBackgroundColor('#07070f');
+  // Отключаем вертикальный свайп чтобы не закрывал приложение при скролле
+  if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+  // Включаем скролл внутри Mini App
+  if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
+}
 
 // ── ITEMS ──
 const ITEMS = [
