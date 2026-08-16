@@ -624,39 +624,30 @@ if(starsGift && starsGift > 0){
   history.replaceState(null,'',window.location.pathname);
 }
 
-// агружаем баланс с сервера
+// SYNC BALANCE
 function syncFromServer(){
-  // робуем получить userId всеми способами
   var uid = null;
-  try{ if(tg && tg.initDataUnsafe && tg.initDataUnsafe.user) uid = tg.initDataUnsafe.user.id; }catch(e){}
-  try{ if(!uid && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) uid = window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
-  if(!uid){ setTimeout(syncFromServer, 400); return; }
-  fetch('https://web-production-dd3cb.up.railway.app/balance/'+uid)
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var bal = parseInt(d.balance) || 0;
-      S.balance = bal;
-      saveState();
-      var el = document.getElementById('userBalance');
-      if(el) el.textContent = bal + ' \u2b50';
-      if(bal > 0) showToast('\u2b50 ' + bal + ' Stars', '#ffd700');
-    })
-    .catch(function(){});
-  // нвентарь
-  fetch('https://web-production-dd3cb.up.railway.app/inventory/'+uid)
-    .then(function(r){ return r.json(); })
-    .then(function(inv){
-      if(!Array.isArray(inv) || inv.length===0) return;
-      inv.forEach(function(e){
-        var local = S.inventory.find(function(x){ return x.itemId===e.itemId; });
-        if(local){ local.count = Math.max(local.count, e.count); }
-        else { S.inventory.push({itemId:e.itemId,count:e.count}); }
-      });
-      saveState(); updateInvBadge(); renderInventory();
-    })
-    .catch(function(){});
+  try{ uid = window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
+  var el = document.getElementById('userBalance');
+  if(!uid){
+    if(el) el.style.color = 'red';
+    setTimeout(syncFromServer, 300);
+    return;
+  }
+  if(el) el.style.color = 'orange';
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'https://web-production-dd3cb.up.railway.app/balance/' + uid);
+  xhr.onload = function(){
+    var d = JSON.parse(xhr.responseText);
+    var bal = d.balance || 0;
+    S.balance = bal;
+    saveState();
+    if(el){ el.textContent = bal + ' \u2b50'; el.style.color = ''; }
+    if(bal > 0) showToast('\u2b50 ' + bal + ' Stars', '#ffd700');
+  };
+  xhr.onerror = function(){ if(el) el.style.color = 'red'; };
+  xhr.send();
 }
-// апускаем несколько раз с задержкой
-setTimeout(syncFromServer, 500);
-setTimeout(syncFromServer, 1500);
-setTimeout(syncFromServer, 4000);
+setTimeout(syncFromServer, 300);
+setTimeout(syncFromServer, 1000);
+setTimeout(syncFromServer, 3000);
