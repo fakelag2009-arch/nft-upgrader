@@ -546,9 +546,21 @@ function setInitialsAvatar(name){
 }
 
 // ── SYNC инвентаря с бота ──
+function getTgUserId(){
+  try{
+    if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.id)
+      return tg.initDataUnsafe.user.id;
+    if(tg&&tg.initData){
+      const p=new URLSearchParams(tg.initData);
+      const u=JSON.parse(decodeURIComponent(p.get('user')||'{}'));
+      if(u.id) return u.id;
+    }
+  }catch(e){}
+  return null;
+}
 function syncInventoryFromBot(){
-  if(!tg || !tg.initDataUnsafe?.user) return;
-  const userId = tg.initDataUnsafe.user.id;
+  const userId = getTgUserId();
+  if(!userId) return;
   fetch(`https://web-production-dd3cb.up.railway.app/inventory/${userId}`)
     .then(r => r.json())
     .then(inv => {
@@ -607,14 +619,14 @@ if(starsGift && starsGift > 0){
   history.replaceState(null,'',window.location.pathname);
 }
 
-// агружаем баланс и инвентарь с сервера
+// Загружаем баланс и инвентарь с сервера
 function syncFromServer(){
-  if(!tg || !tg.initDataUnsafe?.user) return;
-  const userId = tg.initDataUnsafe.user.id;
+  const userId = getTgUserId();
+  if(!userId){ setTimeout(syncFromServer, 500); return; }
   fetch('https://web-production-dd3cb.up.railway.app/balance/'+userId)
     .then(r=>r.json())
-    .then(d=>{ if(d.balance>0){ S.balance=d.balance; saveState(); updateBalance(); showToast('+'+d.balance+' stars на балансе','#ffd700'); } })
+    .then(d=>{ if(d.balance>0){ S.balance=d.balance; saveState(); updateBalance(); showToast('+'+d.balance+' ⭐ на балансе','#ffd700'); } })
     .catch(()=>{});
   syncInventoryFromBot();
 }
-setTimeout(syncFromServer, 1000);
+setTimeout(syncFromServer, 800);
