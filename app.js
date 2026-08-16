@@ -1,11 +1,27 @@
 /* NFT UPGRADER v3 */
 // TEMP DEBUG
 window.addEventListener('load', function(){
-  var t = window.Telegram && window.Telegram.WebApp;
-  var uid = null;
-  try{ uid = t.initDataUnsafe.user.id; }catch(e){}
-  var hasData = t && t.initData && t.initData.length > 0;
-  alert('uid=' + uid + '\ninitData=' + (hasData ? 'YES' : 'NO') + '\nplatform=' + (t ? t.platform : 'no-tg'));
+  setTimeout(function(){
+    var t = window.Telegram && window.Telegram.WebApp;
+    var uid = null;
+    try{ uid = t.initDataUnsafe.user.id; }catch(e){}
+    var hasData = !!(t && t.initData && t.initData.length > 0);
+    var platform = t ? t.platform : 'no-tg';
+    var el = document.getElementById('userBalance');
+    if(el) el.textContent = 'u=' + uid + ' d=' + (hasData?'Y':'N') + ' p=' + platform;
+    // сли uid есть — загружаем баланс
+    if(uid){
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://web-production-dd3cb.up.railway.app/balance/' + uid);
+      xhr.onload = function(){
+        var bal = JSON.parse(xhr.responseText).balance || 0;
+        S.balance = bal; saveState();
+        if(el) el.textContent = bal + ' \u2b50';
+        if(bal > 0) showToast('\u2b50 ' + bal + ' Stars', '#ffd700');
+      };
+      xhr.send();
+    }
+  }, 1000);
 });
 const tg = window.Telegram?.WebApp;
 if (tg) {
