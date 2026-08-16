@@ -1,4 +1,12 @@
 /* NFT UPGRADER v3 */
+// TEMP DEBUG
+window.addEventListener('load', function(){
+  var t = window.Telegram && window.Telegram.WebApp;
+  var uid = null;
+  try{ uid = t.initDataUnsafe.user.id; }catch(e){}
+  var hasData = t && t.initData && t.initData.length > 0;
+  alert('uid=' + uid + '\ninitData=' + (hasData ? 'YES' : 'NO') + '\nplatform=' + (t ? t.platform : 'no-tg'));
+});
 const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready();
