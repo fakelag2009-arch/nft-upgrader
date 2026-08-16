@@ -609,3 +609,64 @@ window.addEventListener('message', (e)=>{
     if(d.type==='balance_update'){ S.balance=d.balance; saveState(); updateBalance(); }
   }catch(ex){}
 });
+        const shown=win?prize:bet;
+        const user=FAKE_USERS[Math.floor(Math.random()*FAKE_USERS.length)];
+        const card=makeFeedCard(win,shown.name,shown.img,bet.value,prize.value,user,timeAgo(Date.now()-(i+1)*18000));
+        document.getElementById('feedTrack').appendChild(card);
+      },i*100);
+    });
+  };
+  buildInit();
+  (function sched(){ setTimeout(()=>{
+    const pair=FEED_PAIRS[Math.floor(Math.random()*FEED_PAIRS.length)];
+    const bet=ITEMS[pair.b],prize=ITEMS[pair.p];
+    if(!bet||!prize)return sched();
+    const win=Math.random()*100<calcChance(bet.value,prize.value);
+    const shown=win?prize:bet;
+    const user=FAKE_USERS[Math.floor(Math.random()*FAKE_USERS.length)];
+    pushFeedCard(makeFeedCard(win,shown.name,shown.img,bet.value,prize.value,user,'только что'));
+    sched();
+  },3500+Math.random()*4500); })();
+}
+
+// ── PAGE SWITCH ──
+function switchPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const pg=document.getElementById('page-'+name),nb=document.getElementById('nav-'+name);
+  if(pg)pg.classList.add('active');
+  if(nb)nb.classList.add('active');
+  if(name==='shop')renderShop();
+  if(name==='inventory')renderInventory();
+}
+
+// ── TOAST ──
+function showToast(msg,color){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText=`position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(18,18,32,0.97);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:20px;z-index:9999;transition:all 0.3s;opacity:0;backdrop-filter:blur(10px);white-space:nowrap;max-width:90vw;text-align:center`;document.body.appendChild(t);}
+  t.textContent=msg;
+  if(color)t.style.borderColor=color+'66';
+  t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},2500);
+}
+
+// ── TELEGRAM USER ──
+function initTelegramUser(){
+  if(!tg||!tg.initDataUnsafe?.user)return;
+  const user=tg.initDataUnsafe.user;
+  const name=user.first_name||'User';
+  const photo=user.photo_url;
+  if(photo)document.getElementById('userAvatar').src=photo;
+  else document.getElementById('userAvatar').src=`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1a3a6e&color=4d9fff&size=80&bold=true&format=svg`;
+}
+
+// ── INIT ──
+loadState();
+drawWheel(0,0);
+updateUI();
+updateBalance();
+updateInvBadge();
+renderShop();
+initTelegramUser();
+connectSSE(); // пробуем SSE, fallback на фейк
