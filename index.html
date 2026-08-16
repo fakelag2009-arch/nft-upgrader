@@ -118,9 +118,35 @@
       <div class="page-title"><span class="title-icon">🎒</span> ИНВЕНТАРЬ</div>
       <div style="padding:0 14px">
         <div class="inv-empty" id="invEmptyPage">
-          <div style="font-size:40px">📦</div>
-          <p>Инвентарь пуст</p>
-          <button class="inv-go-shop" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('shop'),100)">🛍 В магазин</button>
+          <div class="inv-empty-scene">
+            <div class="inv-empty-glow"></div>
+            <svg class="inv-empty-box" width="120" height="120" viewBox="0 0 120 120" fill="none">
+              <!-- коробка -->
+              <path d="M20 45 L60 25 L100 45 L100 85 L60 105 L20 85 Z" fill="#1a1a35"/>
+              <path d="M20 45 L60 25 L100 45 L100 85 L60 105 L20 85 Z" stroke="#4d9fff" stroke-width="1.5" stroke-linejoin="round"/>
+              <!-- верхняя грань -->
+              <path d="M20 45 L60 65 L100 45" stroke="#4d9fff" stroke-width="1.5"/>
+              <path d="M60 25 L60 65" stroke="#4d9fff" stroke-width="1.5"/>
+              <!-- лента -->
+              <path d="M60 25 L60 105" stroke="#ffd700" stroke-width="2" opacity="0.6"/>
+              <path d="M20 45 L100 45" stroke="#ffd700" stroke-width="2" opacity="0.6"/>
+              <!-- бант -->
+              <path d="M50 30 Q55 22 60 25 Q65 22 70 30 Q65 32 60 25 Q55 32 50 30 Z" fill="#ffd700" opacity="0.8"/>
+              <!-- блики -->
+              <circle cx="35" cy="55" r="3" fill="#4d9fff" opacity="0.4"/>
+              <circle cx="82" cy="48" r="2" fill="#ffd700" opacity="0.5"/>
+            </svg>
+            <!-- частицы -->
+            <div class="inv-particle" style="--x:20px;--y:-40px;--d:0s">⭐</div>
+            <div class="inv-particle" style="--x:-30px;--y:-20px;--d:0.5s">✨</div>
+            <div class="inv-particle" style="--x:35px;--y:-15px;--d:1s">💎</div>
+            <div class="inv-particle" style="--x:-15px;--y:-50px;--d:1.5s">🌟</div>
+          </div>
+          <div class="inv-empty-title">Инвентарь пуст</div>
+          <div class="inv-empty-sub">Купи предметы в магазине<br>и начни апгрейдить!</div>
+          <button class="inv-go-shop-big" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('shop'),100)">
+            <span>🛍 Перейти в магазин</span>
+          </button>
         </div>
         <div class="inv-grid" id="invGridPage" style="display:none"></div>
       </div>
