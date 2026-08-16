@@ -8,8 +8,6 @@
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-
-<!-- Весь лейаут — вертикальный flex, body = 100vh -->
 <div class="app">
 
   <!-- TOPBAR -->
@@ -22,15 +20,17 @@
     </div>
     <div class="topbar-spacer"></div>
     <div class="topbar-right">
-      <div class="avatar"><img id="userAvatar" src="" alt="av" style="display:none"/><div id="userInitials" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;background:linear-gradient(135deg,#1a6fff,#aa00ff);letter-spacing:0.5px"></div></div>
+      <div class="avatar">
+        <img id="userAvatar" src="" alt="av" style="display:none"/>
+        <div id="userInitials" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;background:linear-gradient(135deg,#1a6fff,#aa00ff)"></div>
+      </div>
       <div class="topbar-info">
-        <div class="topbar-balance" id="userBalance">0 ⭐</div>
-        <button class="topup-btn" onclick="showTopup()">+ Пополнить</button>
+        <div class="topbar-balance" id="userBalance">0 &#11088;</div>
+        <button class="topup-btn" onclick="showTopup()">+ &#1055;&#1086;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1100;</button>
       </div>
     </div>
   </header>
 
-  <!-- PAGES — скроллится -->
   <main class="pages">
 
     <!-- HOME -->
@@ -39,9 +39,9 @@
         <div class="home-menu-title">NFT Upgrader</div>
         <button class="home-menu-btn home-upgrade-btn" onclick="switchPage('upgrade')">
           <div class="home-btn-left">
-            <div class="home-btn-title">АПГРЕЙД</div>
-            <div class="home-btn-sub">Крути кольцо — меняй подарок<br>на дороже</div>
-            <div class="home-btn-badge">ШАНС ДО 80%</div>
+            <div class="home-btn-title">&#1040;&#1055;&#1043;&#1056;&#1045;&#1049;&#1044;</div>
+            <div class="home-btn-sub">&#1050;&#1088;&#1091;&#1090;&#1080; &#1082;&#1086;&#1083;&#1100;&#1094;&#1086; &mdash; &#1084;&#1077;&#1085;&#1103;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082; &#1085;&#1072; &#1076;&#1086;&#1088;&#1086;&#1078;&#1077;</div>
+            <div class="home-btn-badge">&#1064;&#1040;&#1053;&#1057; &#1044;&#1054; 80%</div>
           </div>
           <div class="home-btn-right">
             <div class="home-wheel-preview">
@@ -56,56 +56,42 @@
         </button>
         <button class="home-menu-btn home-inv-btn" onclick="switchPage('inventory')">
           <div class="home-btn-left">
-            <div class="home-btn-title">ИНВЕНТАРЬ</div>
-            <div class="home-btn-sub">Твои предметы и подарки</div>
+            <div class="home-btn-title">&#1048;&#1053;&#1042;&#1045;&#1053;&#1058;&#1040;&#1056;&#1068;</div>
+            <div class="home-btn-sub">&#1058;&#1074;&#1086;&#1080; &#1087;&#1088;&#1077;&#1076;&#1084;&#1077;&#1090;&#1099; &#1080; &#1087;&#1086;&#1076;&#1072;&#1088;&#1082;&#1080;</div>
           </div>
           <div class="home-btn-right">
             <svg width="72" height="72" viewBox="0 0 72 72" fill="none" style="filter:drop-shadow(0 0 14px rgba(255,165,0,0.7));animation:chestFloat 3s ease-in-out infinite">
-              <!-- сундук -->
               <rect x="10" y="34" width="52" height="28" rx="5" fill="#8B4513"/>
               <rect x="10" y="34" width="52" height="28" rx="5" fill="none" stroke="#ffd700" stroke-width="2"/>
               <rect x="10" y="28" width="52" height="12" rx="5" fill="#A0522D"/>
               <rect x="10" y="28" width="52" height="12" rx="5" fill="none" stroke="#ffd700" stroke-width="2"/>
-              <!-- полосы -->
               <rect x="10" y="39" width="52" height="3" fill="#ffd700" opacity="0.3"/>
-              <rect x="10" y="54" width="52" height="3" fill="#ffd700" opacity="0.3"/>
               <rect x="34" y="28" width="4" height="34" fill="#ffd700" opacity="0.3"/>
-              <!-- замок -->
               <rect x="28" y="40" width="16" height="12" rx="3" fill="#ffd700"/>
               <circle cx="36" cy="46" r="3" fill="#8B4513"/>
-              <!-- блеск -->
               <circle cx="18" cy="20" r="3" fill="#ffd700" opacity="0.8"/>
               <circle cx="36" cy="14" r="2" fill="#ffd700" opacity="0.6"/>
               <circle cx="54" cy="19" r="2.5" fill="#ffd700" opacity="0.7"/>
-              <path d="M18 20 L19 16 L20 20 L24 21 L20 22 L19 26 L18 22 L14 21 Z" fill="#ffd700" opacity="0.6"/>
             </svg>
           </div>
         </button>
         <button class="home-menu-btn home-promo-btn" onclick="showPromo()">
           <div class="home-btn-left">
-            <div class="home-btn-title">ПРОМОКОД</div>
-            <div class="home-btn-sub">Активируй код и получи Stars</div>
+            <div class="home-btn-title">&#1055;&#1056;&#1054;&#1052;&#1054;&#1050;&#1054;&#1044;</div>
+            <div class="home-btn-sub">&#1040;&#1082;&#1090;&#1080;&#1074;&#1080;&#1088;&#1091;&#1081; &#1082;&#1086;&#1076; &#1080; &#1087;&#1086;&#1083;&#1091;&#1095;&#1080; Stars</div>
           </div>
           <div class="home-btn-right">
             <svg width="72" height="72" viewBox="0 0 72 72" fill="none" style="filter:drop-shadow(0 0 14px rgba(170,0,255,0.8));animation:ticketFloat 2.5s ease-in-out infinite">
-              <!-- билет -->
               <rect x="6" y="22" width="60" height="28" rx="7" fill="#2a0050"/>
               <rect x="6" y="22" width="60" height="28" rx="7" fill="none" stroke="#aa00ff" stroke-width="2"/>
-              <!-- вырезы -->
               <circle cx="6" cy="36" r="6" fill="#07070f"/>
               <circle cx="66" cy="36" r="6" fill="#07070f"/>
-              <!-- пунктир -->
               <line x1="18" y1="36" x2="54" y2="36" stroke="#aa00ff" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
-              <!-- левая часть -->
               <rect x="10" y="26" width="18" height="20" rx="4" fill="#3a0070"/>
-              <text x="19" y="40" font-size="13" text-anchor="middle" fill="#ffd700">⭐</text>
-              <!-- правая часть -->
+              <text x="19" y="40" font-size="13" text-anchor="middle" fill="#ffd700">&#11088;</text>
               <text x="47" y="34" font-size="8" fill="#cc44ff" font-weight="700" text-anchor="middle">500</text>
               <text x="47" y="45" font-size="7" fill="rgba(255,255,255,0.5)" text-anchor="middle">STARS</text>
-              <!-- звёзды вокруг -->
               <circle cx="58" cy="16" r="3" fill="#ffd700" opacity="0.7"/>
-              <circle cx="14" cy="58" r="2" fill="#aa00ff" opacity="0.8"/>
-              <circle cx="60" cy="56" r="2.5" fill="#ffd700" opacity="0.5"/>
               <path d="M56 16 L57 13 L58 16 L61 17 L58 18 L57 21 L56 18 L53 17 Z" fill="#ffd700" opacity="0.8"/>
             </svg>
           </div>
@@ -115,24 +101,26 @@
 
     <!-- INVENTORY PAGE -->
     <section class="page" id="page-inventory">
-      <div class="page-title"><span class="title-icon">🎒</span> ИНВЕНТАРЬ</div>
+      <div class="page-title"><span class="title-icon">&#127922;</span> &#1048;&#1053;&#1042;&#1045;&#1053;&#1058;&#1040;&#1056;&#1068;</div>
       <div style="padding:0 14px">
         <div class="inv-empty" id="invEmptyPage">
-          <p style="font-size:18px;font-weight:700;color:#fff;margin:0 0 20px;text-align:center">Инвентарь пуст</p>
-          <button class="inv-go-shop-big" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('shop'),100)">🛍 Перейти в магазин</button>
+          <p style="font-size:18px;font-weight:700;color:#fff;margin:0 0 20px;text-align:center">&#1048;&#1085;&#1074;&#1077;&#1085;&#1090;&#1072;&#1088;&#1100; &#1087;&#1091;&#1089;&#1090;</p>
+          <button class="inv-go-shop-big" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('shop'),100)">&#1055;&#1077;&#1088;&#1077;&#1081;&#1090;&#1080; &#1074; &#1084;&#1072;&#1075;&#1072;&#1079;&#1080;&#1085;</button>
         </div>
         <div class="inv-grid" id="invGridPage" style="display:none"></div>
       </div>
     </section>
+
+    <!-- UPGRADE PAGE -->
     <section class="page" id="page-upgrade">
-      <div class="page-title"><span class="title-icon">⬆</span> UPGRADE</div>
+      <div class="page-title"><span class="title-icon">&#8679;</span> UPGRADE</div>
       <div class="feed-scroll"><div class="feed-track" id="feedTrack"></div></div>
       <div class="roulette-arena">
         <div class="roulette-outer">
           <div class="roulette-ring" id="rouletteRing">
             <canvas id="rouletteCanvas" width="280" height="280"></canvas>
             <div class="roulette-center">
-              <span id="centerText">Выберите предмет</span>
+              <span id="centerText">&#1042;&#1099;&#1073;&#1077;&#1088;&#1080;&#1090;&#1077; &#1087;&#1088;&#1077;&#1076;&#1084;&#1077;&#1090;</span>
               <span id="centerPercent" class="center-percent"></span>
             </div>
             <div class="roulette-needle"></div>
@@ -141,7 +129,7 @@
       </div>
       <div class="slots-row">
         <div class="slot" id="slotYours" onclick="openItemModal('yours')">
-          <div class="slot-label">Ваш предмет</div>
+          <div class="slot-label">&#1042;&#1072;&#1096; &#1087;&#1088;&#1077;&#1076;&#1084;&#1077;&#1090;</div>
           <div class="slot-arrow">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
               <path d="M7 8L12 13L17 8" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
@@ -150,7 +138,7 @@
           </div>
         </div>
         <div class="slot" id="slotWanted" onclick="openItemModal('wanted')">
-          <div class="slot-label">Желаемый предмет</div>
+          <div class="slot-label">&#1046;&#1077;&#1083;&#1072;&#1077;&#1084;&#1099;&#1081; &#1087;&#1088;&#1077;&#1076;&#1084;&#1077;&#1090;</div>
           <div class="slot-arrow">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
               <path d="M7 16L12 11L17 16" stroke="#4d9fff" stroke-width="2.5" stroke-linecap="round"/>
@@ -160,38 +148,34 @@
         </div>
       </div>
       <div class="action-bar">
-        <button class="action-icon-btn" onclick="resetSlots()">↺</button>
+        <button class="action-icon-btn" onclick="resetSlots()">&#8635;</button>
         <button class="upgrade-btn" id="upgradeBtn" onclick="startUpgrade()" disabled>
-          <span class="upgrade-btn-text">⬆ Апгрейд</span>
-          <span class="upgrade-btn-sub" id="upgradeBtnSub">Шанс выигрыша 0%</span>
+          <span class="upgrade-btn-text">&#8679; &#1040;&#1087;&#1075;&#1088;&#1077;&#1081;&#1076;</span>
+          <span class="upgrade-btn-sub" id="upgradeBtnSub">&#1064;&#1072;&#1085;&#1089; &#1074;&#1099;&#1080;&#1075;&#1088;&#1099;&#1096;&#1072; 0%</span>
         </button>
       </div>
-
       <div class="inner-tabs">
-        <button class="inner-tab active" id="itab-inventory" onclick="switchInnerTab('inventory')">🎒 Инвентарь <span id="invBadge" style="display:none;background:#00e676;color:#000;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;align-items:center;justify-content:center;margin-left:4px"></span></button>
-        <button class="inner-tab" id="itab-shop" onclick="switchInnerTab('shop')">🛍 Магазин</button>
+        <button class="inner-tab active" id="itab-inventory" onclick="switchInnerTab('inventory')">&#127922; &#1048;&#1085;&#1074;&#1077;&#1085;&#1090;&#1072;&#1088;&#1100; <span id="invBadge" style="display:none;background:#00e676;color:#000;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;align-items:center;justify-content:center;margin-left:4px"></span></button>
+        <button class="inner-tab" id="itab-shop" onclick="switchInnerTab('shop')">&#1052;&#1072;&#1075;&#1072;&#1079;&#1080;&#1085;</button>
       </div>
-
       <div class="inner-panel active" id="ipanel-inventory">
         <div class="inv-empty" id="invEmpty">
-          <div style="font-size:40px">📦</div>
-          <p>ИИнвентарь пуст</p>
-          <button class="inv-go-shop" onclick="switchInnerTab('shop')">🛍 В магазин</button>
+          <div style="font-size:40px">&#128230;</div>
+          <p>&#1048;&#1085;&#1074;&#1077;&#1085;&#1090;&#1072;&#1088;&#1100; &#1087;&#1091;&#1089;&#1090;</p>
+          <button class="inv-go-shop" onclick="switchInnerTab('shop')">&#1042; &#1084;&#1072;&#1075;&#1072;&#1079;&#1080;&#1085;</button>
         </div>
         <div class="inv-grid" id="invGrid" style="display:none"></div>
       </div>
-
       <div class="inner-panel" id="ipanel-shop">
         <div class="shop-tabs">
-          <button class="shop-tab active" onclick="setShopTab('all',this)">Все</button>
-          <button class="shop-tab" onclick="setShopTab('common',this)">Обычные</button>
-          <button class="shop-tab" onclick="setShopTab('uncommon',this)">Необычные</button>
-          <button class="shop-tab" onclick="setShopTab('rare',this)">Редкие</button>
-          <button class="shop-tab" onclick="setShopTab('legendary',this)">Легенд.</button>
+          <button class="shop-tab active" onclick="setShopTab('all',this)">&#1042;&#1089;&#1077;</button>
+          <button class="shop-tab" onclick="setShopTab('common',this)">&#1054;&#1073;&#1099;&#1095;&#1085;&#1099;&#1077;</button>
+          <button class="shop-tab" onclick="setShopTab('uncommon',this)">&#1053;&#1077;&#1086;&#1073;&#1099;&#1095;&#1085;&#1099;&#1077;</button>
+          <button class="shop-tab" onclick="setShopTab('rare',this)">&#1056;&#1077;&#1076;&#1082;&#1080;&#1077;</button>
+          <button class="shop-tab" onclick="setShopTab('legendary',this)">&#1051;&#1077;&#1075;&#1077;&#1085;&#1076;.</button>
         </div>
         <div class="shop-grid" id="shopGrid"></div>
       </div>
-
       <div style="height:20px;flex-shrink:0"></div>
     </section>
 
@@ -205,7 +189,7 @@
         <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill="currentColor" opacity="0.9"/>
         <path d="M9 21V15H15V21" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
-      <span class="nav-label">Главная</span>
+      <span class="nav-label">&#1043;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103;</span>
     </button>
   </nav>
 
@@ -216,30 +200,29 @@
   <div class="modal topup-modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <span>Пополнить баланс</span>
-      <button class="modal-close" onclick="closeTopup()">✕</button>
+      <span>&#1055;&#1086;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1100; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;</span>
+      <button class="modal-close" onclick="closeTopup()">&#10005;</button>
     </div>
     <div class="topup-body">
       <div class="topup-star-display">
-        <div class="topup-star-emoji">⭐</div>
+        <div class="topup-star-emoji">&#11088;</div>
         <div class="topup-star-amount" id="topupDisplay">100</div>
         <div class="topup-star-sub">Stars</div>
       </div>
       <div class="topup-chips">
-        <button class="topup-chip" onclick="setAmt(1)">1</button>
-        <button class="topup-chip" onclick="setAmt(10)">10</button>
-        <button class="topup-chip" onclick="setAmt(25)">25</button>
-        <button class="topup-chip active" onclick="setAmt(100)">100</button>
-        <button class="topup-chip" onclick="setAmt(250)">250</button>
+        <button class="topup-chip" onclick="setAmt(15)">15</button>
+        <button class="topup-chip" onclick="setAmt(50)">50</button>
+        <button class="topup-chip" onclick="setAmt(100)">100</button>
+        <button class="topup-chip active" onclick="setAmt(250)">250</button>
         <button class="topup-chip" onclick="setAmt(500)">500</button>
         <button class="topup-chip" onclick="setAmt(1000)">1000</button>
       </div>
       <div class="topup-input-row">
-        <span class="topup-input-star">⭐</span>
-        <input type="number" id="topupInput" min="1" max="999999" value="100" placeholder="Введи количество" oninput="onTopupInput(this.value)"/>
+        <span class="topup-input-star">&#11088;</span>
+        <input type="number" id="topupInput" min="1" max="999999" value="250" placeholder="&#1050;&#1086;&#1083;&#1080;&#1095;&#1077;&#1089;&#1090;&#1074;&#1086;" oninput="onTopupInput(this.value)"/>
       </div>
-      <button class="topup-pay-btn" onclick="confirmTopup()">Оплатить <span id="topupPayLabel">100 ⭐</span></button>
-      <div class="topup-footer">Оплата через Telegram Stars · Зачисляется мгновенно</div>
+      <button class="topup-pay-btn" onclick="confirmTopup()">&#1054;&#1087;&#1083;&#1072;&#1090;&#1080;&#1090;&#1100; <span id="topupPayLabel">250 &#11088;</span></button>
+      <div class="topup-footer">&#1054;&#1087;&#1083;&#1072;&#1090;&#1072; &#1095;&#1077;&#1088;&#1077;&#1079; Telegram Stars &middot; &#1047;&#1072;&#1095;&#1080;&#1089;&#1083;&#1103;&#1077;&#1090;&#1089;&#1103; &#1085;&#1072; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089; &#1073;&#1086;&#1090;&#1072;</div>
     </div>
   </div>
 </div>
@@ -249,21 +232,21 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <span id="modalTitle">Выберите предмет</span>
-      <button class="modal-close" onclick="closeItemModal()">✕</button>
+      <span id="modalTitle">&#1042;&#1099;&#1073;&#1077;&#1088;&#1080;&#1090;&#1077; &#1087;&#1088;&#1077;&#1076;&#1084;&#1077;&#1090;</span>
+      <button class="modal-close" onclick="closeItemModal()">&#10005;</button>
     </div>
     <div class="modal-search">
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Поиск..." oninput="filterItems()" autocomplete="off"/>
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="searchInput" placeholder="&#1055;&#1086;&#1080;&#1089;&#1082;..." oninput="filterItems()" autocomplete="off"/>
       </div>
     </div>
     <div class="rarity-tabs">
-      <button class="rtab active" onclick="setRarityFilter('all',this)">Все</button>
-      <button class="rtab" onclick="setRarityFilter('common',this)">Обычные</button>
-      <button class="rtab" onclick="setRarityFilter('uncommon',this)">Необычные</button>
-      <button class="rtab" onclick="setRarityFilter('rare',this)">Редкие</button>
-      <button class="rtab" onclick="setRarityFilter('legendary',this)">Легенд.</button>
+      <button class="rtab active" onclick="setRarityFilter('all',this)">&#1042;&#1089;&#1077;</button>
+      <button class="rtab" onclick="setRarityFilter('common',this)">&#1054;&#1073;&#1099;&#1095;&#1085;&#1099;&#1077;</button>
+      <button class="rtab" onclick="setRarityFilter('uncommon',this)">&#1053;&#1077;&#1086;&#1073;&#1099;&#1095;&#1085;&#1099;&#1077;</button>
+      <button class="rtab" onclick="setRarityFilter('rare',this)">&#1056;&#1077;&#1076;&#1082;&#1080;&#1077;</button>
+      <button class="rtab" onclick="setRarityFilter('legendary',this)">&#1051;&#1077;&#1075;&#1077;&#1085;&#1076;.</button>
     </div>
     <div class="modal-grid" id="itemGrid"></div>
   </div>
@@ -274,8 +257,8 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <span>Купить предмет</span>
-      <button class="modal-close" onclick="closeBuyModal()">✕</button>
+      <span>&#1050;&#1091;&#1087;&#1080;&#1090;&#1100; &#1087;&#1088;&#1077;&#1076;&#1084;&#1077;&#1090;</span>
+      <button class="modal-close" onclick="closeBuyModal()">&#10005;</button>
     </div>
     <div class="buy-modal-body" id="buyModalBody"></div>
   </div>
@@ -291,8 +274,8 @@
     <div class="result-subtitle" id="resultSubtitle"></div>
     <div class="result-item-card" id="resultItemCard"></div>
     <div class="result-actions">
-      <button class="result-btn-secondary" onclick="closeResult()">Закрыть</button>
-      <button class="result-btn-primary" onclick="closeResult()">Ещё раз</button>
+      <button class="result-btn-secondary" onclick="closeResult()">&#1047;&#1072;&#1082;&#1088;&#1099;&#1090;&#1100;</button>
+      <button class="result-btn-primary" onclick="closeResult()">&#1045;&#1097;&#1105; &#1088;&#1072;&#1079;</button>
     </div>
   </div>
 </div>
@@ -305,17 +288,16 @@
     <div id="promoParticles" style="position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden"></div>
     <div style="width:40px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:14px auto 24px"></div>
     <div style="text-align:center;margin-bottom:20px">
-      <div style="font-size:52px;line-height:1;margin-bottom:12px;display:inline-block;filter:drop-shadow(0 0 16px rgba(170,0,255,0.8));animation:promoIconFloat 3s ease-in-out infinite">🎟</div>
-      <h2 style="font-size:22px;font-weight:900;color:#fff;margin:0 0 6px;letter-spacing:1px">Промокод</h2>
-      <p style="font-size:13px;color:rgba(255,255,255,0.4);margin:0">Введи промокод чтобы получить Stars</p>
+      <div style="font-size:52px;line-height:1;margin-bottom:12px;display:inline-block;filter:drop-shadow(0 0 16px rgba(170,0,255,0.8))">&#127903;</div>
+      <h2 style="font-size:22px;font-weight:900;color:#fff;margin:0 0 6px">&#1055;&#1088;&#1086;&#1084;&#1086;&#1082;&#1086;&#1076;</h2>
+      <p style="font-size:13px;color:rgba(255,255,255,0.4);margin:0">&#1042;&#1074;&#1077;&#1076;&#1080; &#1087;&#1088;&#1086;&#1084;&#1086;&#1082;&#1086;&#1076; &#1095;&#1090;&#1086;&#1073;&#1099; &#1087;&#1086;&#1083;&#1091;&#1095;&#1080;&#1090;&#1100; Stars</p>
     </div>
     <div style="position:relative;margin-bottom:12px">
-      <input id="promoInput" type="text" placeholder="ВВЕДИ КОД" autocomplete="off" autocapitalize="characters" oninput="this.value=this.value.toUpperCase()"
+      <input id="promoInput" type="text" placeholder="&#1042;&#1042;&#1045;&#1044;&#1048; &#1050;&#1054;&#1044;" autocomplete="off" autocapitalize="characters" oninput="this.value=this.value.toUpperCase()"
         style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1.5px solid rgba(170,0,255,0.4);border-radius:16px;padding:16px 20px;color:#fff;font-size:18px;font-weight:700;letter-spacing:3px;text-align:center;outline:none"/>
     </div>
     <button onclick="activatePromo()" style="position:relative;overflow:hidden;width:100%;background:linear-gradient(135deg,#aa00ff,#6600cc);border:none;border-radius:16px;padding:16px;color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(170,0,255,0.4);margin-bottom:12px">
-      <span style="position:relative;z-index:1">Активировать</span>
-      <span style="position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:promoShine 2.5s ease-in-out infinite"></span>
+      &#1040;&#1082;&#1090;&#1080;&#1074;&#1080;&#1088;&#1086;&#1074;&#1072;&#1090;&#1100;
     </button>
     <div id="promoResult" style="text-align:center;font-size:14px;font-weight:600;min-height:22px"></div>
   </div>
