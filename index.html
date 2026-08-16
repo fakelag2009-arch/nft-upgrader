@@ -37,170 +37,53 @@
     <section class="page active" id="page-home">
       <div class="home-menu">
         <div class="home-menu-title">NFT Upgrader</div>
-        <button class="home-menu-btn home-upgrade-btn" onclick="switchPage('upgrade')">
-          <div class="home-btn-left">
-            <div class="home-btn-title">&#1040;&#1055;&#1043;&#1056;&#1045;&#1049;&#1044;</div>
-            <div class="home-btn-sub">&#1050;&#1088;&#1091;&#1090;&#1080; &#1082;&#1086;&#1083;&#1100;&#1094;&#1086; &mdash; &#1084;&#1077;&#1085;&#1103;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082; &#1085;&#1072; &#1076;&#1086;&#1088;&#1086;&#1078;&#1077;</div>
-            <div class="home-btn-badge">&#1064;&#1040;&#1053;&#1057; &#1044;&#1054; 80%</div>
-          </div>
-          <div class="home-btn-right">
-            <div class="home-wheel-preview">
-              <svg width="64" height="64" viewBox="0 0 64 64">
-                <circle cx="32" cy="32" r="28" fill="#0a2210" stroke="rgba(0,230,118,0.3)" stroke-width="2"/>
-                <path d="M32 32 L32 6 A26 26 0 0 1 55 45 Z" fill="#0a2210" stroke="rgba(0,230,118,0.5)" stroke-width="1"/>
-                <path d="M32 32 L55 45 A26 26 0 1 1 32 6 Z" fill="#2a0f10" stroke="rgba(255,71,87,0.3)" stroke-width="1"/>
-                <polygon points="32,4 29,12 35,12" fill="white"/>
-              </svg>
+        <!-- UPGRADE -->
+        <button class="hm-btn hm-upgrade" onclick="switchPage('upgrade')">
+          <div class="hm-content">
+            <div class="hm-text">
+              <div class="hm-title"></div>
+              <div class="hm-sub">еняй подарки на дороже</div>
+              <div class="hm-tag green-tag">ШС  80%</div>
             </div>
+            <div class="hm-icon">🎰</div>
+          </div>
+          <div class="hm-particles">
+            <span style="--x:10%;--y:20%;--d:0s">✦</span>
+            <span style="--x:80%;--y:15%;--d:0.4s">✦</span>
+            <span style="--x:70%;--y:70%;--d:0.8s">✦</span>
           </div>
         </button>
-        <button class="home-menu-btn home-inv-btn" onclick="switchPage('inventory')">
-          <div class="home-btn-left">
-            <div class="home-btn-title">&#1048;&#1053;&#1042;&#1045;&#1053;&#1058;&#1040;&#1056;&#1068;</div>
-            <div class="home-btn-sub">&#1058;&#1074;&#1086;&#1080; &#1087;&#1088;&#1077;&#1076;&#1084;&#1077;&#1090;&#1099; &#1080; &#1087;&#1086;&#1076;&#1072;&#1088;&#1082;&#1080;</div>
-          </div>
-          <div class="home-btn-right">
-            <svg width="72" height="72" viewBox="0 0 72 72" fill="none" style="filter:drop-shadow(0 0 14px rgba(255,165,0,0.7));animation:chestFloat 3s ease-in-out infinite">
-              <rect x="10" y="34" width="52" height="28" rx="5" fill="#8B4513"/>
-              <rect x="10" y="34" width="52" height="28" rx="5" fill="none" stroke="#ffd700" stroke-width="2"/>
-              <rect x="10" y="28" width="52" height="12" rx="5" fill="#A0522D"/>
-              <rect x="10" y="28" width="52" height="12" rx="5" fill="none" stroke="#ffd700" stroke-width="2"/>
-              <rect x="10" y="39" width="52" height="3" fill="#ffd700" opacity="0.3"/>
-              <rect x="34" y="28" width="4" height="34" fill="#ffd700" opacity="0.3"/>
-              <rect x="28" y="40" width="16" height="12" rx="3" fill="#ffd700"/>
-              <circle cx="36" cy="46" r="3" fill="#8B4513"/>
-              <circle cx="18" cy="20" r="3" fill="#ffd700" opacity="0.8"/>
-              <circle cx="36" cy="14" r="2" fill="#ffd700" opacity="0.6"/>
-              <circle cx="54" cy="19" r="2.5" fill="#ffd700" opacity="0.7"/>
-            </svg>
+        <!-- INVENTORY -->
+        <button class="hm-btn hm-inventory" onclick="switchPage('inventory')">
+          <div class="hm-content">
+            <div class="hm-text">
+              <div class="hm-title">ТЬ</div>
+              <div class="hm-sub">Твои предметы и подарки</div>
+            </div>
+            <div class="hm-icon">🎁</div>
           </div>
         </button>
-        <button class="home-menu-btn home-promo-btn" onclick="showPromo()">
-          <div class="home-btn-left">
-            <div class="home-btn-title">&#1055;&#1056;&#1054;&#1052;&#1054;&#1050;&#1054;&#1044;</div>
-            <div class="home-btn-sub">&#1040;&#1082;&#1090;&#1080;&#1074;&#1080;&#1088;&#1091;&#1081; &#1082;&#1086;&#1076; &#1080; &#1087;&#1086;&#1083;&#1091;&#1095;&#1080; Stars</div>
-          </div>
-          <div class="home-btn-right">
-            <svg width="72" height="72" viewBox="0 0 72 72" fill="none" style="filter:drop-shadow(0 0 14px rgba(170,0,255,0.8));animation:ticketFloat 2.5s ease-in-out infinite">
-              <rect x="6" y="22" width="60" height="28" rx="7" fill="#2a0050"/>
-              <rect x="6" y="22" width="60" height="28" rx="7" fill="none" stroke="#aa00ff" stroke-width="2"/>
-              <circle cx="6" cy="36" r="6" fill="#07070f"/>
-              <circle cx="66" cy="36" r="6" fill="#07070f"/>
-              <line x1="18" y1="36" x2="54" y2="36" stroke="#aa00ff" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
-              <rect x="10" y="26" width="18" height="20" rx="4" fill="#3a0070"/>
-              <text x="19" y="40" font-size="13" text-anchor="middle" fill="#ffd700">&#11088;</text>
-              <text x="47" y="34" font-size="8" fill="#cc44ff" font-weight="700" text-anchor="middle">500</text>
-              <text x="47" y="45" font-size="7" fill="rgba(255,255,255,0.5)" text-anchor="middle">STARS</text>
-              <circle cx="58" cy="16" r="3" fill="#ffd700" opacity="0.7"/>
-              <path d="M56 16 L57 13 L58 16 L61 17 L58 18 L57 21 L56 18 L53 17 Z" fill="#ffd700" opacity="0.8"/>
-            </svg>
-          </div>
-        </button>
-        <button class="home-menu-btn home-cases-btn" onclick="showToast('\u23f3 \u0421\u043a\u043e\u0440\u043e...', '#ffd700');tg?.HapticFeedback?.impactOccurred('medium')">
-          <div class="home-btn-left">
-            <div class="home-btn-title">&#1050;&#1045;&#1049;&#1057;&#1067;</div>
-            <div class="home-btn-sub">&#1054;&#1090;&#1082;&#1088;&#1099;&#1074;&#1072;&#1081; &#1082;&#1077;&#1081;&#1089;&#1099; &#1080; &#1087;&#1086;&#1083;&#1091;&#1095;&#1072;&#1081; &#1087;&#1088;&#1080;&#1079;&#1099;</div>
-            <div class="home-btn-badge" style="background:rgba(255,215,0,0.15);border-color:rgba(255,215,0,0.4);color:#ffd700">&#1057;&#1050;&#1054;&#1056;&#1054;</div>
-          </div>
-          <div class="home-btn-right">
-            <svg width="72" height="72" viewBox="0 0 72 72" fill="none" style="filter:drop-shadow(0 0 14px rgba(255,215,0,0.7));animation:chestFloat 3s ease-in-out infinite">
-              <rect x="8" y="30" width="56" height="34" rx="6" fill="#1a1a2e" stroke="#ffd700" stroke-width="1.5"/>
-              <rect x="8" y="22" width="56" height="14" rx="6" fill="#1a1a2e" stroke="#ffd700" stroke-width="1.5"/>
-              <rect x="28" y="36" width="16" height="12" rx="3" fill="#ffd700"/>
-              <circle cx="36" cy="42" r="3" fill="#1a1a2e"/>
-              <path d="M8 29 L64 29" stroke="#ffd700" stroke-width="1.5" opacity="0.5"/>
-              <circle cx="20" cy="15" r="3" fill="#ffd700" opacity="0.7" style="animation:emptyFloat 2s ease-in-out infinite"/>
-              <circle cx="52" cy="14" r="2.5" fill="#ffd700" opacity="0.6"/>
-              <circle cx="36" cy="10" r="2" fill="#ffd700" opacity="0.8"/>
-              <path d="M34 10 L35 7 L36 10 L39 11 L36 12 L35 15 L34 12 L31 11 Z" fill="#ffd700" opacity="0.9"/>
-            </svg>
-          </div>
-        </button>
-      </div>
-    </section>
-
-    <!-- INVENTORY PAGE -->
-    <section class="page" id="page-inventory">
-      <div style="padding:0 14px">
-        <div class="inv-empty" id="invEmptyPage">
-          <p style="font-size:18px;font-weight:700;color:#fff;margin:0 0 20px;text-align:center">&#1048;&#1085;&#1074;&#1077;&#1085;&#1090;&#1072;&#1088;&#1100; &#1087;&#1091;&#1089;&#1090;</p>
-          <button class="inv-go-shop-big" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('shop'),100)">&#1055;&#1077;&#1088;&#1077;&#1081;&#1090;&#1080; &#1074; &#1084;&#1072;&#1075;&#1072;&#1079;&#1080;&#1085;</button>
+        <!-- PROMO + CASES -->
+        <div class="hm-row">
+          <button class="hm-btn hm-promo hm-half" onclick="showPromo()">
+            <div class="hm-content">
+              <div class="hm-text">
+                <div class="hm-title sm"></div>
+                <div class="hm-sub">есплатные звёзды</div>
+              </div>
+              <div class="hm-icon sm">🎟</div>
+            </div>
+          </button>
+          <button class="hm-btn hm-cases hm-half" onclick="showToast('⏳ Скоро...', '#ffd700')">
+            <div class="hm-content">
+              <div class="hm-text">
+                <div class="hm-title sm">СЫ</div>
+                <div class="hm-tag gold-tag">С</div>
+              </div>
+              <div class="hm-icon sm">📦</div>
+            </div>
+          </button>
         </div>
-        <div class="inv-grid" id="invGridPage" style="display:none"></div>
-      </div>
-    </section>
-
-    <!-- CASES PAGE -->
-    <section class="page" id="page-cases">
-      <div class="cases-header">
-        <button class="cases-back" onclick="switchPage('home')">&#8592;</button>
-        <div class="cases-title">&#1050;&#1045;&#1049;&#1057;&#1067;</div>
-        <div style="width:36px"></div>
-      </div>
-      <div class="cases-grid">
-
-        <!-- есплатный -->
-        <div class="case-card-new" onclick="openCase('free')">
-          <div class="case-img-wrap" style="background:linear-gradient(135deg,#0a2a0a,#051505)">
-            <div class="case-img-inner" style="font-size:72px;filter:drop-shadow(0 0 20px #00e676)">&#127873;</div>
-            <div class="case-shine"></div>
-          </div>
-          <div class="case-info-new">
-            <div class="case-name-new">&#1045;&#1078;&#1077;&#1076;&#1085;&#1077;&#1074;&#1085;&#1099;&#1081;</div>
-            <button class="case-btn-new free" id="caseFreeCdBtn">
-              <span id="caseFreeCd">&#1041;&#1077;&#1089;&#1087;&#1083;&#1072;&#1090;&#1085;&#1086;</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- 30 Stars -->
-        <div class="case-card-new" onclick="openCase(30)">
-          <div class="case-img-wrap" style="background:linear-gradient(135deg,#060e1f,#030a14)">
-            <div class="case-img-inner" style="font-size:72px;filter:drop-shadow(0 0 20px #4d9fff)">&#128220;</div>
-            <div class="case-shine"></div>
-          </div>
-          <div class="case-info-new">
-            <div class="case-name-new">&#1054;&#1073;&#1099;&#1095;&#1085;&#1099;&#1081;</div>
-            <button class="case-btn-new blue">30 &#11088;</button>
-          </div>
-        </div>
-
-        <!-- 50 Stars -->
-        <div class="case-card-new" onclick="openCase(50)">
-          <div class="case-img-wrap" style="background:linear-gradient(135deg,#100618,#08030f)">
-            <div class="case-img-inner" style="font-size:72px;filter:drop-shadow(0 0 20px #aa00ff)">&#127919;</div>
-            <div class="case-shine"></div>
-          </div>
-          <div class="case-info-new">
-            <div class="case-name-new">&#1053;&#1077;&#1086;&#1073;&#1099;&#1095;&#1085;&#1099;&#1081;</div>
-            <button class="case-btn-new purple">50 &#11088;</button>
-          </div>
-        </div>
-
-        <!-- 100 Stars -->
-        <div class="case-card-new" onclick="openCase(100)">
-          <div class="case-img-wrap" style="background:linear-gradient(135deg,#1a0606,#100303)">
-            <div class="case-img-inner" style="font-size:72px;filter:drop-shadow(0 0 20px #ff4757)">&#128293;</div>
-            <div class="case-shine"></div>
-          </div>
-          <div class="case-info-new">
-            <div class="case-name-new">&#1056;&#1077;&#1076;&#1082;&#1080;&#1081;</div>
-            <button class="case-btn-new red">100 &#11088;</button>
-          </div>
-        </div>
-
-        <!-- 500 Stars -->
-        <div class="case-card-new" onclick="openCase(500)">
-          <div class="case-img-wrap" style="background:linear-gradient(135deg,#1a1400,#100d00)">
-            <div class="case-img-inner" style="font-size:72px;filter:drop-shadow(0 0 24px #ffd700)">&#128081;</div>
-            <div class="case-shine"></div>
-          </div>
-          <div class="case-info-new">
-            <div class="case-name-new">&#1051;&#1077;&#1075;&#1077;&#1085;&#1076;&#1072;&#1088;&#1085;&#1099;&#1081;</div>
-            <button class="case-btn-new gold">500 &#11088;</button>
-          </div>
-        </div>
-
       </div>
     </section>
 
