@@ -3,8 +3,7 @@ const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready();
   tg.expand();
-  // апускаем синхронизацию когда Telegram готов
-  tg.onEvent('viewportChanged', function(){ syncFromServer(); });
+
   tg.setHeaderColor('#07070f');
   tg.setBackgroundColor('#07070f');
   // Отключаем вертикальный свайп чтобы не закрывал приложение при скролле
@@ -651,3 +650,4 @@ function syncFromServer(){
 setTimeout(syncFromServer, 300);
 setTimeout(syncFromServer, 1000);
 setTimeout(syncFromServer, 3000);
+if(tg) tg.onEvent('viewportChanged', function(){ syncFromServer(); });
