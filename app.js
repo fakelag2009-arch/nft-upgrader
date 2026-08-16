@@ -579,7 +579,7 @@ function syncInventoryFromBot(){
 function showPromo(){
   const modal = document.getElementById('promoModal');
   const sheet = document.getElementById('promoSheet');
-  modal.style.display = 'flex';
+  modal.style.cssText = 'display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:2000;align-items:flex-end;justify-content:center';
   requestAnimationFrame(()=>{ if(sheet) sheet.style.transform='translateY(0)'; });
   document.getElementById('promoInput').value = '';
   document.getElementById('promoResult').textContent = '';
