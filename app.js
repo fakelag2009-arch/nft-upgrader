@@ -626,10 +626,20 @@ if(starsGift && starsGift > 0){
 function syncFromServer(){
   const userId = getTgUserId();
   if(!userId){ setTimeout(syncFromServer, 300); return; }
+  // агружаем баланс
   fetch('https://web-production-dd3cb.up.railway.app/balance/'+userId)
-    .then(r=>r.json())
-    .then(d=>{ S.balance=d.balance||0; saveState(); updateBalance(); showToast(d.balance+' ⭐ баланс','#ffd700'); })
-    .catch(e=>showToast('err:'+e.message,'#ff4757'));
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      const bal = parseInt(d.balance) || 0;
+      S.balance = bal;
+      saveState();
+      const el = document.getElementById('userBalance');
+      if(el) el.textContent = bal + ' ⭐';
+      if(bal > 0) showToast('⭐ ' + bal + ' Stars на балансе', '#ffd700');
+    })
+    .catch(function(e){ showToast('шибка загрузки: '+e.message, '#ff4757'); });
   syncInventoryFromBot();
 }
-setTimeout(syncFromServer, 1000);
+// апускаем сразу и через 1 сек для надёжности
+setTimeout(syncFromServer, 500);
+setTimeout(syncFromServer, 2000);
