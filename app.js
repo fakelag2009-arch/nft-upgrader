@@ -622,33 +622,39 @@ if(starsGift && starsGift > 0){
   history.replaceState(null,'',window.location.pathname);
 }
 
-// агружаем баланс через POST /init
+// агружаем баланс с сервера
 function syncFromServer(){
-  var initData = tg && tg.initData;
-  if(!initData || initData.length === 0){ setTimeout(syncFromServer, 300); return; }
-  fetch('https://web-production-dd3cb.up.railway.app/init', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({initData: initData})
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    var bal = parseInt(d.balance) || 0;
-    S.balance = bal;
-    saveState();
-    var el = document.getElementById('userBalance');
-    if(el) el.textContent = bal + ' \u2b50';
-    if(bal > 0) showToast('\u2b50 ' + bal + ' Stars na balanse', '#ffd700');
-    if(d.inventory && d.inventory.length > 0){
-      d.inventory.forEach(function(e){
-        var local = S.inventory.find(function(x){ return x.itemId === e.itemId; });
+  // робуем получить userId всеми способами
+  var uid = null;
+  try{ if(tg && tg.initDataUnsafe && tg.initDataUnsafe.user) uid = tg.initDataUnsafe.user.id; }catch(e){}
+  try{ if(!uid && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) uid = window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
+  if(!uid){ setTimeout(syncFromServer, 400); return; }
+  fetch('https://web-production-dd3cb.up.railway.app/balance/'+uid)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var bal = parseInt(d.balance) || 0;
+      S.balance = bal;
+      saveState();
+      var el = document.getElementById('userBalance');
+      if(el) el.textContent = bal + ' \u2b50';
+      if(bal > 0) showToast('\u2b50 ' + bal + ' Stars', '#ffd700');
+    })
+    .catch(function(){});
+  // нвентарь
+  fetch('https://web-production-dd3cb.up.railway.app/inventory/'+uid)
+    .then(function(r){ return r.json(); })
+    .then(function(inv){
+      if(!Array.isArray(inv) || inv.length===0) return;
+      inv.forEach(function(e){
+        var local = S.inventory.find(function(x){ return x.itemId===e.itemId; });
         if(local){ local.count = Math.max(local.count, e.count); }
         else { S.inventory.push({itemId:e.itemId,count:e.count}); }
       });
       saveState(); updateInvBadge(); renderInventory();
-    }
-  })
-  .catch(function(){});
+    })
+    .catch(function(){});
 }
+// апускаем несколько раз с задержкой
 setTimeout(syncFromServer, 500);
-setTimeout(syncFromServer, 2500);
+setTimeout(syncFromServer, 1500);
+setTimeout(syncFromServer, 4000);
