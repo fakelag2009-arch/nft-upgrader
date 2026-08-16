@@ -489,6 +489,46 @@ function startFakeFeed(){
   })();
 }
 
+// ── PROMO ──
+function showPromo(){
+  document.getElementById('promoModal').style.display='flex';
+  document.getElementById('promoInput').value='';
+  document.getElementById('promoResult').textContent='';
+  setTimeout(()=>document.getElementById('promoInput').focus(),100);
+}
+function closePromo(){
+  document.getElementById('promoModal').style.display='none';
+}
+function activatePromo(){
+  const code = document.getElementById('promoInput').value.trim().toUpperCase();
+  const resEl = document.getElementById('promoResult');
+  if(!code){ resEl.style.color='#ff4757'; resEl.textContent='Введи промокод'; return; }
+  // Получаем userId
+  var uid = null;
+  try{ uid = window.Telegram.WebApp.initDataUnsafe.user.id; }catch(e){}
+  if(!uid){ resEl.style.color='#ff4757'; resEl.textContent='Ошибка: нет userId'; return; }
+  resEl.style.color='#888'; resEl.textContent='Активируем...';
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST','https://web-production-dd3cb.up.railway.app/promo/use');
+  xhr.setRequestHeader('Content-Type','application/json');
+  xhr.onload = function(){
+    var d = JSON.parse(xhr.responseText);
+    if(d.ok){
+      S.balance = d.balance;
+      saveState(); updateBalance();
+      resEl.style.color='#00e676';
+      resEl.textContent = '✅ +' + d.stars + ' ⭐ зачислено!';
+      showToast('⭐ +' + d.stars + ' Stars!','#00e676');
+      setTimeout(closePromo, 1500);
+    } else {
+      resEl.style.color='#ff4757';
+      resEl.textContent = '❌ ' + d.error;
+    }
+  };
+  xhr.onerror = function(){ resEl.style.color='#ff4757'; resEl.textContent='Ошибка сети'; };
+  xhr.send(JSON.stringify({code:code, userId:uid}));
+}
+
 // ── TOPUP ──
 function showTopup(){ tg?.HapticFeedback?.impactOccurred('light');setAmt(100);document.getElementById('topupModal').classList.add('open'); }
 function closeTopup(){ document.getElementById('topupModal').classList.remove('open'); }
