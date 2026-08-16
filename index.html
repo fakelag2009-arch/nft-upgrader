@@ -54,7 +54,7 @@
             </div>
           </div>
         </button>
-        <button class="home-menu-btn home-inv-btn" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('inventory'),100)">
+        <button class="home-menu-btn home-inv-btn" onclick="switchPage('inventory')">
           <div class="home-btn-left">
             <div class="home-btn-title">ИНВЕНТАРЬ</div>
             <div class="home-btn-sub">Твои предметы и подарки</div>
@@ -75,7 +75,18 @@
       </div>
     </section>
 
-    <!-- UPGRADE -->
+    <!-- INVENTORY PAGE -->
+    <section class="page" id="page-inventory">
+      <div class="page-title"><span class="title-icon">🎒</span> ИНВЕНТАРЬ</div>
+      <div style="padding:0 14px">
+        <div class="inv-empty" id="invEmptyPage">
+          <div style="font-size:40px">📦</div>
+          <p>Инвентарь пуст</p>
+          <button class="inv-go-shop" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('shop'),100)">🛍 В магазин</button>
+        </div>
+        <div class="inv-grid" id="invGridPage" style="display:none"></div>
+      </div>
+    </section>
     <section class="page" id="page-upgrade">
       <div class="page-title"><span class="title-icon">⬆</span> UPGRADE</div>
       <div class="feed-scroll"><div class="feed-track" id="feedTrack"></div></div>
@@ -155,10 +166,6 @@
       <div class="nav-active-pill"></div>
       <span class="nav-icon">🏠</span>
       <span class="nav-label">Главная</span>
-    </button>
-    <button class="nav-btn" id="nav-upgrade" onclick="switchPage('upgrade')">
-      <span class="nav-icon nav-upgrade-icon">⬆</span>
-      <span class="nav-label">Апгрейд</span>
     </button>
   </nav>
 
