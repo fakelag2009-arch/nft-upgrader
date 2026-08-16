@@ -35,11 +35,34 @@
 
     <!-- HOME -->
     <section class="page" id="page-home">
-      <div class="home-placeholder">
-        <div class="home-icon">🎁</div>
-        <h2>Главная</h2>
-        <p>Скоро здесь появится что-то интересное</p>
-        <div class="home-soon">Coming soon</div>
+      <div class="home-menu">
+        <div class="home-menu-title">NFT Upgrader</div>
+        <button class="home-menu-btn home-upgrade-btn" onclick="switchPage('upgrade')">
+          <div class="home-btn-left">
+            <div class="home-btn-title">АПГРЕЙД</div>
+            <div class="home-btn-sub">Крути кольцо — меняй подарок<br>на дороже</div>
+            <div class="home-btn-badge">ШАНС ДО 80%</div>
+          </div>
+          <div class="home-btn-right">
+            <div class="home-wheel-preview">
+              <svg width="64" height="64" viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="28" fill="#0a2210" stroke="rgba(0,230,118,0.3)" stroke-width="2"/>
+                <path d="M32 32 L32 6 A26 26 0 0 1 55 45 Z" fill="#0a2210" stroke="rgba(0,230,118,0.5)" stroke-width="1"/>
+                <path d="M32 32 L55 45 A26 26 0 1 1 32 6 Z" fill="#2a0f10" stroke="rgba(255,71,87,0.3)" stroke-width="1"/>
+                <polygon points="32,4 29,12 35,12" fill="white"/>
+              </svg>
+            </div>
+          </div>
+        </button>
+        <button class="home-menu-btn home-inv-btn" onclick="switchPage('upgrade');setTimeout(()=>switchInnerTab('inventory'),100)">
+          <div class="home-btn-left">
+            <div class="home-btn-title">ИНВЕНТАРЬ</div>
+            <div class="home-btn-sub">Твои предметы и подарки</div>
+          </div>
+          <div class="home-btn-right">
+            <div style="font-size:48px;line-height:1;filter:drop-shadow(0 4px 12px rgba(255,150,0,0.5))">🎁</div>
+          </div>
+        </button>
       </div>
     </section>
 
@@ -124,14 +147,14 @@
       <span class="nav-icon">🎟</span>
       <span class="nav-label">Промокод</span>
     </button>
-    <button class="nav-btn" id="nav-home" onclick="switchPage('home')">
+    <button class="nav-btn active" id="nav-home" onclick="switchPage('home')">
+      <div class="nav-active-pill"></div>
       <span class="nav-icon">🏠</span>
       <span class="nav-label">Главная</span>
     </button>
-    <button class="nav-btn active" id="nav-upgrade" onclick="switchPage('upgrade')">
-      <div class="nav-active-pill"></div>
-      <span class="nav-icon nav-upgrade-icon">⬆</span>
-      <span class="nav-label">Апгрейд</span>
+    <button class="nav-btn" id="nav-upgrade" onclick="switchPage('upgrade')">
+      <span class="nav-icon">🛍</span>
+      <span class="nav-label">Магазин</span>
     </button>
   </nav>
 
