@@ -542,7 +542,7 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 .hm-left{display:flex;flex-direction:column;flex:1;gap:5px;padding:16px 0 16px 18px;z-index:2}
 .hm-right{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:96px;z-index:2}
 .hm-title{font-family:'Russo One',sans-serif!important;font-size:22px!important;font-weight:900!important;letter-spacing:2px!important;font-style:normal!important;line-height:1.1!important}
-.hm-sub{font-family:'Exo 2',sans-serif!important;font-size:11px!important;opacity:.65!important;font-weight:500!important}
+.hm-sub{font-family:'Exo 2',sans-serif!important;font-size:11px!important;color:rgba(255,255,255,0.75)!important;font-weight:500!important}
 .hm-tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 11px;border-radius:20px;letter-spacing:1px;margin-top:4px;width:fit-content}
 .hm-tag-green{background:rgba(0,230,118,.15);color:#00e676;border:1px solid rgba(0,230,118,.4)}
 .hm-wheel-svg{animation:wheelSpin 5s linear infinite;filter:drop-shadow(0 0 10px rgba(0,230,118,.7))}
