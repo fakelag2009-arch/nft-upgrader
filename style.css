@@ -537,46 +537,30 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 /* HOME MENU */
 .home-menu{display:flex;flex-direction:column;padding:16px 14px 10px;gap:10px;align-items:center}
 .home-menu-title{font-size:17px;font-weight:900;color:#fff;text-align:center;letter-spacing:4px;margin-bottom:2px;opacity:.85}
-.hm-btn{position:relative;width:92%;border:none;border-radius:18px;cursor:pointer;overflow:hidden;display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:0;min-height:90px;transition:transform .1s,box-shadow .1s}
-.hm-btn:active{transform:translateY(5px)!important}
+.hm-btn{position:relative;width:92%;border:none;border-radius:18px;cursor:pointer;overflow:hidden;display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:0;transition:transform .1s,box-shadow .1s;min-height:90px;background:transparent}
+.hm-btn:active{transform:scale(0.97)!important}
+
+/* артинка на всю кнопку */
+.hm-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:1;border-radius:18px}
+.hm-btn-overlay{position:absolute;inset:0;z-index:2;border-radius:18px}
+
+/* нимация нажатия */
+.hm-upgrade,.hm-inventory,.hm-promo{box-shadow:0 6px 0 rgba(0,0,0,0.5),0 10px 24px rgba(0,0,0,0.4)}
+.hm-upgrade:active,.hm-inventory:active,.hm-promo:active{box-shadow:0 2px 0 rgba(0,0,0,0.5)!important;transform:translateY(4px)!important}
+
+/* CASES - своя кнопка без картинки */
 .hm-left{display:flex;flex-direction:column;flex:1;gap:5px;padding:16px 0 16px 18px;z-index:2}
 .hm-icon-wrap{font-size:70px;line-height:1;flex-shrink:0;width:100px;display:flex;align-items:center;justify-content:center;z-index:2;animation:hmFloat 3s ease-in-out infinite;margin-right:4px}
-@keyframes hmFloat{0%,100%{transform:translateY(0) rotate(-4deg) scale(1)}50%{transform:translateY(-10px) rotate(4deg) scale(1.05)}}
-.hm-title{font-size:22px!important;font-weight:900!important;letter-spacing:1px!important;line-height:1.1!important;font-style:italic!important}
-.hm-sub{font-size:11px!important;font-weight:500!important;line-height:1.4!important;opacity:.8!important}
+@keyframes hmFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
+.hm-title{font-size:22px!important;font-weight:900!important;letter-spacing:1px!important;font-style:italic!important}
+.hm-sub{font-size:11px!important;opacity:.8!important;font-weight:500!important}
 .hm-tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 11px;border-radius:20px;letter-spacing:1px;margin-top:4px;width:fit-content}
-.hm-tag-green{background:rgba(0,0,0,.25);color:#afffcc;border:1px solid rgba(255,255,255,.3)}
-.hm-tag-gold{background:rgba(0,0,0,.25);color:#fff3aa;border:1px solid rgba(255,255,255,.3)}
-.hm-btn::after{content:'';position:absolute;top:0;left:-120%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:hmSweep 5s ease-in-out infinite;z-index:5;pointer-events:none}
-@keyframes hmSweep{0%{left:-120%}55%,100%{left:160%}}
-
-/* UPGRADE - яркий зелёный */
-.hm-upgrade{background:linear-gradient(120deg,#1a6e2e 0%,#0d4d1e 50%,#0a3a16 100%);box-shadow:0 7px 0 #052010,0 14px 30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.15);border:1.5px solid rgba(0,200,80,.6)}
-.hm-upgrade:active{box-shadow:0 2px 0 #052010!important}
-.hm-upgrade .hm-title{color:#afffcc!important;text-shadow:0 2px 8px rgba(0,0,0,.5)}
-.hm-upgrade .hm-sub{color:rgba(200,255,220,.7)!important}
-.hm-upgrade .hm-icon-wrap{filter:drop-shadow(0 8px 16px rgba(0,0,0,.6))}
-
-/* INVENTORY - яркий фиолетовый */
-.hm-inventory{background:linear-gradient(120deg,#5a1e8a 0%,#3d1060 50%,#2a0848 100%);box-shadow:0 7px 0 #1a0530,0 14px 30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.15);border:1.5px solid rgba(200,80,255,.5)}
-.hm-inventory:active{box-shadow:0 2px 0 #1a0530!important}
-.hm-inventory .hm-title{color:#e8aaff!important;text-shadow:0 2px 8px rgba(0,0,0,.5)}
-.hm-inventory .hm-sub{color:rgba(220,180,255,.7)!important}
-.hm-inventory .hm-icon-wrap{filter:drop-shadow(0 8px 16px rgba(0,0,0,.6));animation-delay:.5s}
-
-/* PROMO - яркий оранжевый */
-.hm-promo{background:linear-gradient(120deg,#8a4200 0%,#6b3000 50%,#4a2000 100%);box-shadow:0 7px 0 #2a1200,0 14px 30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.15);border:1.5px solid rgba(255,140,0,.5)}
-.hm-promo:active{box-shadow:0 2px 0 #2a1200!important}
-.hm-promo .hm-title{color:#ffc866!important;text-shadow:0 2px 8px rgba(0,0,0,.5)}
-.hm-promo .hm-sub{color:rgba(255,200,120,.7)!important}
-.hm-promo .hm-icon-wrap{filter:drop-shadow(0 8px 16px rgba(0,0,0,.6));animation-delay:1s}
-
-/* CASES - яркий синий */
-.hm-cases{background:linear-gradient(120deg,#0a3a7a 0%,#062a5e 50%,#041e45 100%);box-shadow:0 7px 0 #020f28,0 14px 30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.15);border:1.5px solid rgba(50,150,255,.5)}
-.hm-cases:active{box-shadow:0 2px 0 #020f28!important}
+.hm-tag-green{background:rgba(0,230,118,.2);color:#00e676;border:1px solid rgba(0,230,118,.5)}
+.hm-tag-gold{background:rgba(255,215,0,.2);color:#ffd700;border:1px solid rgba(255,215,0,.5)}
+.hm-cases{background:linear-gradient(120deg,#0a3a7a,#062a5e 50%,#041e45);box-shadow:0 7px 0 #020f28,0 14px 30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.1);border:1.5px solid rgba(50,150,255,.5)}
+.hm-cases:active{box-shadow:0 2px 0 #020f28!important;transform:translateY(5px)!important}
 .hm-cases .hm-title{color:#88ccff!important;text-shadow:0 2px 8px rgba(0,0,0,.5)}
-.hm-cases .hm-sub{color:rgba(150,200,255,.7)!important}
-.hm-cases .hm-icon-wrap{filter:drop-shadow(0 8px 16px rgba(0,0,0,.6));animation-delay:1.5s}
+.hm-cases .hm-icon-wrap{filter:drop-shadow(0 8px 16px rgba(0,0,0,.6))}
 
 .bottom-nav{justify-content:center}
 .nav-btn.active{background:linear-gradient(135deg,rgba(26,111,255,.15),rgba(170,0,255,.1));border:1px solid rgba(77,159,255,.3);padding:0 40px}
