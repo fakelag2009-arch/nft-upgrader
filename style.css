@@ -534,7 +534,6 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 .case-btn-new.purple { background: rgba(170,0,255,0.12); color: #cc44ff; border: 1px solid rgba(170,0,255,0.3); }
 .case-btn-new.red    { background: rgba(255,71,87,0.12); color: #ff4757; border: 1px solid rgba(255,71,87,0.3); }
 .case-btn-new.gold   { background: rgba(255,215,0,0.12); color: #ffd700; border: 1px solid rgba(255,215,0,0.3); }
-
 /* HOME MENU */
 .home-menu{display:flex;flex-direction:column;padding:20px 20px 10px;gap:14px;align-items:center}
 .home-menu-title{font-size:18px;font-weight:900;color:#fff;text-align:center;letter-spacing:4px;margin-bottom:4px}
