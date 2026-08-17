@@ -537,29 +537,73 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 /* HOME MENU */
 .home-menu{display:flex;flex-direction:column;padding:16px 14px 10px;gap:10px;align-items:center}
 .home-menu-title{font-size:17px;font-weight:900;color:#fff;text-align:center;letter-spacing:4px;margin-bottom:2px;opacity:.85}
-.hm-btn{position:relative;width:92%;border:none;border-radius:18px;cursor:pointer;overflow:hidden;display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:0;height:82px;transition:transform .1s,box-shadow .1s;background-size:cover;background-position:center;background-repeat:no-repeat}
-.hm-btn:active{transform:translateY(4px) scale(0.98)!important}
-.hm-upgrade{background-image:url('gifts/btn-upgrade.png');box-shadow:0 6px 0 rgba(0,50,10,0.8),0 10px 24px rgba(0,0,0,0.5)}
-.hm-upgrade:active{box-shadow:0 2px 0 rgba(0,50,10,0.8)!important}
-.hm-inventory{background-image:url('gifts/btn-inventory.png');box-shadow:0 6px 0 rgba(40,0,70,0.8),0 10px 24px rgba(0,0,0,0.5)}
-.hm-inventory:active{box-shadow:0 2px 0 rgba(40,0,70,0.8)!important}
-.hm-promo{background-image:url('gifts/btn-promo.png');box-shadow:0 6px 0 rgba(70,30,0,0.8),0 10px 24px rgba(0,0,0,0.5)}
-.hm-promo:active{box-shadow:0 2px 0 rgba(70,30,0,0.8)!important}
-.hm-left{display:flex;flex-direction:column;flex:1;gap:5px;padding:14px 0 14px 18px;z-index:2}
-.hm-icon-wrap{font-size:60px;line-height:1;flex-shrink:0;width:90px;display:flex;align-items:center;justify-content:center;z-index:2;animation:hmFloat 3s ease-in-out infinite}
-@keyframes hmFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(4deg)}}
-.hm-title{font-size:21px!important;font-weight:900!important;letter-spacing:1px!important;font-style:italic!important;line-height:1.1!important}
-.hm-sub{font-size:11px!important;opacity:.8!important;font-weight:500!important}
-.hm-tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 11px;border-radius:20px;letter-spacing:1px;margin-top:4px;width:fit-content}
-.hm-tag-green{background:rgba(0,230,118,.2);color:#00e676;border:1px solid rgba(0,230,118,.5)}
-.hm-tag-gold{background:rgba(255,215,0,.2);color:#ffd700;border:1px solid rgba(255,215,0,.5)}
-.hm-cases{background:linear-gradient(120deg,#0a3a7a,#062a5e 50%,#041e45);box-shadow:0 7px 0 #020f28,0 12px 28px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.1);border:1.5px solid rgba(50,150,255,.5)}
-.hm-cases:active{box-shadow:0 2px 0 #020f28!important}
-.hm-cases .hm-title{color:#88ccff!important}
-.hm-cases .hm-icon-wrap{filter:drop-shadow(0 8px 16px rgba(0,150,255,.6))}
+
+.hm-btn{
+  position:relative;width:92%;border:none;border-radius:18px;cursor:pointer;
+  overflow:hidden;padding:0;height:82px;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  transition:transform 0.12s, box-shadow 0.12s, filter 0.12s;
+  box-shadow:0 6px 0 rgba(0,0,0,0.5), 0 10px 24px rgba(0,0,0,0.4);
+  animation:btnPulse 3s ease-in-out infinite;
+}
+@keyframes btnPulse{
+  0%,100%{box-shadow:0 6px 0 rgba(0,0,0,0.5),0 10px 24px rgba(0,0,0,0.4)}
+  50%{box-shadow:0 6px 0 rgba(0,0,0,0.5),0 14px 32px rgba(100,200,255,0.25)}
+}
+.hm-btn:active{
+  transform:translateY(5px) scale(0.98)!important;
+  box-shadow:0 2px 0 rgba(0,0,0,0.5),0 4px 12px rgba(0,0,0,0.4)!important;
+  filter:brightness(0.85)!important;
+}
+
+/* Shine sweep на каждой кнопке */
+.hm-btn::after{
+  content:'';position:absolute;top:0;left:-120%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+  animation:btnShine 4s ease-in-out infinite;
+  z-index:3;pointer-events:none;
+}
+.hm-upgrade::after{animation-delay:0s}
+.hm-inventory::after{animation-delay:1.3s}
+.hm-promo::after{animation-delay:2.6s}
+@keyframes btnShine{0%{left:-120%}50%,100%{left:150%}}
+
+.hm-upgrade{
+  background-image:url('gifts/btn-upgrade.png');
+  animation-name:btnPulseGreen;
+}
+@keyframes btnPulseGreen{
+  0%,100%{box-shadow:0 6px 0 rgba(0,30,0,0.8),0 10px 24px rgba(0,0,0,0.5)}
+  50%{box-shadow:0 6px 0 rgba(0,30,0,0.8),0 14px 36px rgba(0,230,118,0.3)}
+}
+
+.hm-inventory{
+  background-image:url('gifts/btn-inventory.png');
+  animation-name:btnPulseBlue;
+  animation-delay:1s;
+}
+@keyframes btnPulseBlue{
+  0%,100%{box-shadow:0 6px 0 rgba(0,0,40,0.8),0 10px 24px rgba(0,0,0,0.5)}
+  50%{box-shadow:0 6px 0 rgba(0,0,40,0.8),0 14px 36px rgba(100,100,255,0.3)}
+}
+
+.hm-promo{
+  background-image:url('gifts/btn-promo.png');
+  animation-name:btnPulseOrange;
+  animation-delay:2s;
+}
+@keyframes btnPulseOrange{
+  0%,100%{box-shadow:0 6px 0 rgba(30,10,0,0.8),0 10px 24px rgba(0,0,0,0.5)}
+  50%{box-shadow:0 6px 0 rgba(30,10,0,0.8),0 14px 36px rgba(255,150,0,0.3)}
+}
+
+/* NAV */
 .bottom-nav{justify-content:center}
 .nav-btn.active{background:linear-gradient(135deg,rgba(26,111,255,.15),rgba(170,0,255,.1));border:1px solid rgba(77,159,255,.3);padding:0 40px}
 .nav-btn.active .nav-label{color:#4d9fff;font-weight:800}
-.avatar{border:2px solid transparent;background:linear-gradient(#07070f,#07070f) padding-box,linear-gradient(135deg,#4d9fff,#aa00ff) border-box}
+.avatar{border:2px solid transparent!important;background:linear-gradient(#07070f,#07070f) padding-box,linear-gradient(135deg,#4d9fff,#aa00ff) border-box!important;border-radius:50%!important}
+#userAvatar{border-radius:50%!important}
+
+/* INVENTORY PAGE */
 .inv-go-shop-big{background:linear-gradient(135deg,#1a6fff,#0d47c8);border:none;border-radius:20px;padding:14px 32px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(26,111,255,.5);position:relative}
 .inv-go-shop-big:active{transform:scale(.96)}
