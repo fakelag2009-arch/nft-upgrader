@@ -628,3 +628,7 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 .inv-empty-title { font-size:18px; font-weight:700; color:#fff; margin:0 0 20px; text-align:center; }
 .inv-go-shop-big { background:linear-gradient(135deg,#1a6fff,#0d47c8); border:none; border-radius:20px; padding:14px 32px; color:#fff; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 4px 20px rgba(26,111,255,0.5); position:relative; overflow:hidden; }
 .inv-go-shop-big:active { transform:scale(0.96); }
+/* FORCE FIX */
+.hm-btn{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;padding:16px 16px 20px 20px!important;}
+.hm-left{display:flex!important;flex-direction:column!important;flex:1!important;gap:5px!important;}
+.hm-right{display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important;padding-left:8px!important;}
