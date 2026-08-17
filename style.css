@@ -536,31 +536,28 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 .case-btn-new.gold   { background: rgba(255,215,0,0.12); color: #ffd700; border: 1px solid rgba(255,215,0,0.3); }
 /* HOME MENU */
 .home-menu{display:flex;flex-direction:column;padding:16px 14px 10px;gap:10px;align-items:center}
-.home-menu-title{font-size:17px;font-weight:900;color:#fff;text-align:center;letter-spacing:4px;margin-bottom:2px;opacity:.85}
+.home-menu-title{font-family:'Exo 2',sans-serif;font-size:17px;font-weight:900;color:#fff;text-align:center;letter-spacing:4px;margin-bottom:2px;opacity:.85}
 .hm-btn{position:relative;width:92%;border:none;border-radius:18px;cursor:pointer;overflow:hidden;display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:0;height:90px;transition:transform .1s,box-shadow .1s}
 .hm-btn:active{transform:translateY(5px)!important}
 .hm-left{display:flex;flex-direction:column;flex:1;gap:5px;padding:16px 0 16px 18px;z-index:2}
 .hm-right{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:96px;z-index:2}
-.hm-title{font-size:21px!important;font-weight:900!important;letter-spacing:1px!important;font-style:italic!important;line-height:1.1!important}
-.hm-sub{font-size:11px!important;opacity:.7!important;font-weight:500!important}
+.hm-title{font-family:'Russo One',sans-serif!important;font-size:22px!important;font-weight:900!important;letter-spacing:2px!important;font-style:normal!important;line-height:1.1!important}
+.hm-sub{font-family:'Exo 2',sans-serif!important;font-size:11px!important;opacity:.65!important;font-weight:500!important}
 .hm-tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 11px;border-radius:20px;letter-spacing:1px;margin-top:4px;width:fit-content}
 .hm-tag-green{background:rgba(0,230,118,.15);color:#00e676;border:1px solid rgba(0,230,118,.4)}
-/* Wheel spin */
-.hm-wheel-svg{animation:wheelSpin 6s linear infinite;filter:drop-shadow(0 0 10px rgba(0,230,118,.6))}
+.hm-wheel-svg{animation:wheelSpin 5s linear infinite;filter:drop-shadow(0 0 10px rgba(0,230,118,.7))}
 @keyframes wheelSpin{to{transform:rotate(360deg)}}
-/* Float */
-@keyframes hmFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
-/* Shine */
+@keyframes hmFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
 .hm-btn::after{content:'';position:absolute;top:0;left:-120%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);animation:hmShine 5s ease-in-out infinite;z-index:5;pointer-events:none}
 @keyframes hmShine{0%{left:-120%}55%,100%{left:160%}}
 .hm-upgrade{background:linear-gradient(130deg,#0d2e18,#071a0d 60%,#04110a);box-shadow:0 8px 0 #021408,0 12px 28px rgba(0,0,0,.7),inset 0 1px 0 rgba(0,230,118,.2);outline:1.5px solid rgba(0,230,118,.45);outline-offset:-1px}
-.hm-upgrade:active{box-shadow:0 3px 0 #021408,0 5px 14px rgba(0,0,0,.5)!important}
+.hm-upgrade:active{box-shadow:0 3px 0 #021408!important}
 .hm-upgrade .hm-title{color:#00ff88;text-shadow:0 0 14px rgba(0,255,120,.6)}
 .hm-inventory{background:linear-gradient(130deg,#2a1800,#180e00 60%,#0e0800);box-shadow:0 8px 0 #0f0700,0 12px 28px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,150,0,.2);outline:1.5px solid rgba(255,150,0,.45);outline-offset:-1px}
-.hm-inventory:active{box-shadow:0 3px 0 #0f0700,0 5px 14px rgba(0,0,0,.5)!important}
+.hm-inventory:active{box-shadow:0 3px 0 #0f0700!important}
 .hm-inventory .hm-title{color:#ffa500;text-shadow:0 0 14px rgba(255,150,0,.6)}
 .hm-promo{background:linear-gradient(130deg,#180535,#0d0220 60%,#070112);box-shadow:0 8px 0 #0a0120,0 12px 28px rgba(0,0,0,.7),inset 0 1px 0 rgba(150,0,255,.2);outline:1.5px solid rgba(150,0,255,.5);outline-offset:-1px}
-.hm-promo:active{box-shadow:0 3px 0 #0a0120,0 5px 14px rgba(0,0,0,.5)!important}
+.hm-promo:active{box-shadow:0 3px 0 #0a0120!important}
 .hm-promo .hm-title{color:#cc44ff;text-shadow:0 0 14px rgba(150,0,255,.6)}
 .bottom-nav{justify-content:center}
 .nav-btn.active{background:linear-gradient(135deg,rgba(26,111,255,.15),rgba(170,0,255,.1));border:1px solid rgba(77,159,255,.3);padding:0 40px}
