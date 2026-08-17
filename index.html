@@ -37,6 +37,56 @@
     <section class="page active" id="page-home">
       <div class="home-menu">
         <div class="home-menu-title">NFT Upgrader</div>
+                                <button class="hm-btn hm-upgrade" onclick="switchPage('upgrade')"></button>
+        <button class="hm-btn hm-inventory" onclick="switchPage('inventory')"></button>
+        <button class="hm-btn hm-promo" onclick="showPromo()"></button>
+        <button class="hm-btn hm-cases" onclick="showToast('&#9203; &#1057;&#1082;&#1086;&#1088;&#1086;...', '#ffd700')">
+          <div class="hm-left">
+            <div class="hm-title"><i>&#1050;&#1045;&#1049;&#1057;&#1067;</i></div>
+            <div class="hm-sub">&#1054;&#1090;&#1082;&#1088;&#1099;&#1074;&#1072;&#1081; &#1080; &#1087;&#1086;&#1083;&#1091;&#1095;&#1072;&#1081; &#1087;&#1088;&#1080;&#1079;&#1099;</div>
+            <div class="hm-tag hm-tag-gold">&#1057;&#1050;&#1054;&#1056;&#1054;</div>
+          </div>
+          <div class="hm-icon-wrap">&#128274;</div>
+        </button>
+﻿﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"/>
+  <title>NFT Upgrader</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#229ED9"/>
+        <path d="M17 8l-2 9-3-3-2 2-1-5-3-1 11-3z" fill="white"/>
+      </svg>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-right">
+      <div class="avatar">
+        <img id="userAvatar" src="" alt="av" style="display:none"/>
+        <div id="userInitials" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;background:linear-gradient(135deg,#1a6fff,#aa00ff)"></div>
+      </div>
+      <div class="topbar-info">
+        <div class="topbar-balance" id="userBalance">0 &#11088;</div>
+        <button class="topup-btn" onclick="showTopup()">+ &#1055;&#1086;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1100;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="pages">
+
+    <!-- HOME -->
+    <section class="page active" id="page-home">
+      <div class="home-menu">
+        <div class="home-menu-title">NFT Upgrader</div>
                         <button class="hm-btn hm-upgrade" onclick="switchPage('upgrade')">
           <img src="gifts/btn-upgrade.png" class="hm-bg-img" alt=""/>
           <div class="hm-btn-overlay"></div>
