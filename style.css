@@ -632,3 +632,82 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 .hm-btn{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;padding:16px 16px 20px 20px!important;}
 .hm-left{display:flex!important;flex-direction:column!important;flex:1!important;gap:5px!important;}
 .hm-right{display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important;padding-left:8px!important;}
+
+/* ======= BEAUTIFUL HOME BUTTONS ======= */
+.home-menu{display:flex;flex-direction:column;padding:20px 20px 10px;gap:14px;align-items:center}
+.home-menu-title{font-size:18px;font-weight:900;color:#fff;text-align:center;letter-spacing:4px;margin-bottom:4px;opacity:0.9}
+
+.hm-btn{
+  position:relative;width:88%;border:none;border-radius:20px;cursor:pointer;overflow:hidden;
+  display:flex!important;flex-direction:row!important;align-items:center!important;
+  justify-content:space-between!important;padding:0!important;
+  transition:transform 0.1s,box-shadow 0.1s;
+}
+.hm-btn:active{transform:translateY(5px)!important;}
+
+.hm-left{display:flex!important;flex-direction:column!important;flex:1!important;gap:6px!important;padding:18px 0 18px 20px!important;position:relative;z-index:2}
+.hm-right{display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important;width:90px!important;z-index:2}
+
+.hm-title{font-size:20px!important;font-weight:900!important;letter-spacing:1.5px!important;line-height:1!important;}
+.hm-sub{font-size:11px!important;opacity:0.55!important;font-weight:500!important;line-height:1.4!important;}
+.hm-tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 11px;border-radius:20px;letter-spacing:1px;margin-top:3px;width:fit-content}
+.hm-tag-green{background:rgba(0,230,118,0.15);color:#00e676;border:1px solid rgba(0,230,118,0.4)}
+.hm-tag-gold{background:rgba(255,215,0,0.15);color:#ffd700;border:1px solid rgba(255,215,0,0.4)}
+
+/* Sweep shine */
+.hm-btn::after{content:'';position:absolute;top:0;left:-120%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);animation:hmSweep 5s ease-in-out infinite;z-index:5;pointer-events:none}
+@keyframes hmSweep{0%{left:-120%}55%,100%{left:160%}}
+
+/* Float icon */
+.hm-right svg{animation:hmFloat 3s ease-in-out infinite;transform-origin:center}
+@keyframes hmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.hm-right.hm-spin svg{animation:hmSpin 7s linear infinite}
+@keyframes hmSpin{to{transform:rotate(360deg)}}
+
+/* === UPGRADE GREEN === */
+.hm-upgrade{
+  background:linear-gradient(130deg,#0d2e18 0%,#071a0d 40%,#04110a 100%);
+  border:none;
+  box-shadow:0 8px 0 #021408,0 12px 32px rgba(0,230,118,0.15),inset 0 1px 0 rgba(0,230,118,0.25),inset 0 0 40px rgba(0,230,118,0.04);
+  outline:1.5px solid rgba(0,230,118,0.5);
+  outline-offset:-1px;
+}
+.hm-upgrade:active{box-shadow:0 3px 0 #021408,0 5px 15px rgba(0,230,118,0.1)!important}
+.hm-upgrade .hm-title{color:#00e676;text-shadow:0 0 20px rgba(0,230,118,0.6),0 2px 0 rgba(0,0,0,0.5)}
+.hm-upgrade .hm-right svg{filter:drop-shadow(0 0 12px rgba(0,230,118,0.8))}
+
+/* === INVENTORY ORANGE === */
+.hm-inventory{
+  background:linear-gradient(130deg,#271600 0%,#180e00 40%,#0e0800 100%);
+  border:none;
+  box-shadow:0 8px 0 #0f0700,0 12px 32px rgba(255,150,0,0.15),inset 0 1px 0 rgba(255,150,0,0.25),inset 0 0 40px rgba(255,150,0,0.04);
+  outline:1.5px solid rgba(255,150,0,0.5);
+  outline-offset:-1px;
+}
+.hm-inventory:active{box-shadow:0 3px 0 #0f0700,0 5px 15px rgba(255,150,0,0.1)!important}
+.hm-inventory .hm-title{color:#ff9500;text-shadow:0 0 20px rgba(255,150,0,0.6),0 2px 0 rgba(0,0,0,0.5)}
+.hm-inventory .hm-right svg{filter:drop-shadow(0 0 12px rgba(255,150,0,0.8))}
+
+/* === PROMO PURPLE === */
+.hm-promo{
+  background:linear-gradient(130deg,#180535 0%,#0d0220 40%,#070112 100%);
+  border:none;
+  box-shadow:0 8px 0 #0a0120,0 12px 32px rgba(150,0,255,0.15),inset 0 1px 0 rgba(150,0,255,0.25),inset 0 0 40px rgba(150,0,255,0.04);
+  outline:1.5px solid rgba(150,0,255,0.55);
+  outline-offset:-1px;
+}
+.hm-promo:active{box-shadow:0 3px 0 #0a0120,0 5px 15px rgba(150,0,255,0.1)!important}
+.hm-promo .hm-title{color:#bb33ff;text-shadow:0 0 20px rgba(150,0,255,0.6),0 2px 0 rgba(0,0,0,0.5)}
+.hm-promo .hm-right svg{filter:drop-shadow(0 0 12px rgba(150,0,255,0.8))}
+
+/* === CASES GOLD === */
+.hm-cases{
+  background:linear-gradient(130deg,#1a1500 0%,#100d00 40%,#080700 100%);
+  border:none;
+  box-shadow:0 8px 0 #0d0b00,0 12px 32px rgba(255,210,0,0.12),inset 0 1px 0 rgba(255,210,0,0.2),inset 0 0 40px rgba(255,210,0,0.04);
+  outline:1.5px solid rgba(255,210,0,0.45);
+  outline-offset:-1px;
+}
+.hm-cases:active{box-shadow:0 3px 0 #0d0b00,0 5px 15px rgba(255,210,0,0.1)!important}
+.hm-cases .hm-title{color:#ffd700;text-shadow:0 0 20px rgba(255,210,0,0.55),0 2px 0 rgba(0,0,0,0.5)}
+.hm-cases .hm-right svg{filter:drop-shadow(0 0 12px rgba(255,210,0,0.7))}
