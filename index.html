@@ -37,9 +37,40 @@
     <section class="page active" id="page-home">
       <div class="home-menu">
         <div class="home-menu-title">NFT Upgrader</div>
-        <button class="hm-btn hm-upgrade" onclick="switchPage('upgrade')"></button>
-        <button class="hm-btn hm-inventory" onclick="switchPage('inventory')"></button>
-        <button class="hm-btn hm-promo" onclick="showPromo()"></button>
+        <button class="hm-btn hm-upgrade" onclick="switchPage('upgrade')">
+          <div class="hm-left">
+            <div class="hm-title">&#1040;&#1055;&#1043;&#1056;&#1045;&#1049;&#1044;</div>
+            <div class="hm-sub">&#1050;&#1088;&#1091;&#1090;&#1080; &#1082;&#1086;&#1083;&#1100;&#1094;&#1086; &#8212; &#1084;&#1077;&#1085;&#1103;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;</div>
+            <div class="hm-tag hm-tag-green">&#1064;&#1040;&#1053;&#1057; &#1044;&#1054; 80%</div>
+          </div>
+          <div class="hm-right">
+            <svg class="hm-wheel-svg" viewBox="0 0 80 80" width="76" height="76">
+              <circle cx="40" cy="40" r="34" fill="#0a2210" stroke="rgba(0,230,118,0.4)" stroke-width="2"/>
+              <path d="M40 40L40 8A32 32 0 0 1 68 56Z" fill="#0e3a18" stroke="rgba(0,230,118,0.6)" stroke-width="1"/>
+              <path d="M40 40L68 56A32 32 0 1 1 40 8Z" fill="#2a0f10" stroke="rgba(255,71,87,0.4)" stroke-width="1"/>
+              <circle cx="40" cy="40" r="8" fill="#07070f" stroke="rgba(0,230,118,0.5)" stroke-width="1.5"/>
+              <polygon points="40,4 37,14 43,14" fill="white" opacity="0.9"/>
+            </svg>
+          </div>
+        </button>
+        <button class="hm-btn hm-inventory" onclick="switchPage('inventory')">
+          <div class="hm-left">
+            <div class="hm-title">&#1048;&#1053;&#1042;&#1045;&#1053;&#1058;&#1040;&#1056;&#1068;</div>
+            <div class="hm-sub">&#1058;&#1074;&#1086;&#1080; &#1087;&#1088;&#1077;&#1076;&#1084;&#1077;&#1090;&#1099; &#1080; &#1087;&#1086;&#1076;&#1072;&#1088;&#1082;&#1080;</div>
+          </div>
+          <div class="hm-right">
+            <div style="font-size:58px;animation:hmFloat 3s ease-in-out infinite;filter:drop-shadow(0 0 14px rgba(255,165,0,0.7))">&#127873;</div>
+          </div>
+        </button>
+        <button class="hm-btn hm-promo" onclick="showPromo()">
+          <div class="hm-left">
+            <div class="hm-title">&#1055;&#1056;&#1054;&#1052;&#1054;&#1050;&#1054;&#1044;</div>
+            <div class="hm-sub">&#1040;&#1082;&#1090;&#1080;&#1074;&#1080;&#1088;&#1091;&#1081; &#1082;&#1086;&#1076; &#8212; &#1087;&#1086;&#1083;&#1091;&#1095;&#1080; Stars</div>
+          </div>
+          <div class="hm-right">
+            <div style="font-size:58px;animation:hmFloat 3s ease-in-out infinite;animation-delay:1s;filter:drop-shadow(0 0 14px rgba(170,0,255,0.7))">&#127903;</div>
+          </div>
+        </button>
       </div>
     </section>
 
