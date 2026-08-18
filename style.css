@@ -610,15 +610,64 @@ html,body{height:100%;margin:0;padding:0;background:var(--bg);color:var(--text);
 #userAvatar{border-radius:50%!important}
 .inv-go-shop-big{background:linear-gradient(135deg,#1a6fff,#0d47c8);border:none;border-radius:20px;padding:14px 32px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(26,111,255,.5);position:relative}
 .inv-go-shop-big:active{transform:scale(.96)}
-/* TEST BUTTON */
+/* TEST BUTTON 3D */
 .hm-test{
-  background:linear-gradient(135deg,#1a0010 0%,#0d0010 40%,#050008 100%);
-  box-shadow:0 8px 0 #0a0008,0 12px 32px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,0,128,.2);
-  outline:1.5px solid rgba(255,0,128,.5);outline-offset:-1px;
-  animation:testPulse 2s ease-in-out infinite;
+  background: linear-gradient(135deg, #1a0020 0%, #0d0018 50%, #050010 100%);
+  box-shadow:
+    0 10px 0 #08000e,
+    0 14px 40px rgba(255,0,255,0.2),
+    inset 0 1px 0 rgba(255,100,255,0.3),
+    inset 0 -2px 0 rgba(0,0,0,0.5),
+    0 0 30px rgba(200,0,255,0.15);
+  outline: 2px solid rgba(200,0,255,0.6);
+  outline-offset: -2px;
+  animation: testGlow 2s ease-in-out infinite;
+  transform-style: preserve-3d;
 }
-@keyframes testPulse{
-  0%,100%{box-shadow:0 8px 0 #0a0008,0 12px 32px rgba(0,0,0,.8),0 0 0 rgba(255,0,128,0)}
-  50%{box-shadow:0 8px 0 #0a0008,0 12px 32px rgba(0,0,0,.8),0 0 24px rgba(255,0,128,.4)}
+@keyframes testGlow{
+  0%,100%{outline-color:rgba(200,0,255,0.6);box-shadow:0 10px 0 #08000e,0 14px 40px rgba(255,0,255,0.2),inset 0 1px 0 rgba(255,100,255,0.3),inset 0 -2px 0 rgba(0,0,0,0.5),0 0 20px rgba(200,0,255,0.15)}
+  50%{outline-color:rgba(255,100,255,0.9);box-shadow:0 10px 0 #08000e,0 14px 40px rgba(255,0,255,0.3),inset 0 1px 0 rgba(255,100,255,0.4),inset 0 -2px 0 rgba(0,0,0,0.5),0 0 50px rgba(200,0,255,0.4),0 0 80px rgba(200,0,255,0.15)}
 }
-.hm-test:active{transform:translateY(5px)!important;box-shadow:0 3px 0 #0a0008!important}
+.hm-test:active{transform:translateY(6px) scale(0.97)!important;box-shadow:0 4px 0 #08000e,0 6px 20px rgba(255,0,255,0.2)!important}
+
+/* Голограмма внутри */
+.hm-test::before{
+  content:'';position:absolute;inset:0;border-radius:20px;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(200,0,255,0.03) 2px,
+    rgba(200,0,255,0.03) 4px
+  );
+  pointer-events:none;z-index:1;
+  animation:hologram 8s linear infinite;
+}
+@keyframes hologram{from{background-position:0 0}to{background-position:0 100px}}
+
+/* Цветной отблеск */
+.hm-test::after{
+  content:'';position:absolute;top:0;left:-100%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,100,255,0.2),rgba(100,200,255,0.1),transparent);
+  animation:testShine 2.5s ease-in-out infinite;z-index:6;pointer-events:none;
+}
+@keyframes testShine{0%{left:-100%}50%,100%{left:150%}}
+
+.hm-test .hm-title{
+  background:linear-gradient(90deg,#ff00ff,#ff6bff,#00ffff)!important;
+  -webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;
+  background-clip:text!important;
+  font-size:26px!important;
+  filter:drop-shadow(0 0 8px rgba(255,0,255,0.8));
+  animation:titleShimmer 3s ease-in-out infinite;
+}
+@keyframes titleShimmer{
+  0%,100%{filter:drop-shadow(0 0 8px rgba(255,0,255,0.6))}
+  50%{filter:drop-shadow(0 0 16px rgba(255,0,255,1)) drop-shadow(0 0 30px rgba(0,255,255,0.4))}
+}
+.hm-test svg{animation:iconSpin3D 4s ease-in-out infinite}
+@keyframes iconSpin3D{
+  0%,100%{transform:rotateY(0deg) scale(1)}
+  25%{transform:rotateY(20deg) scale(1.05)}
+  75%{transform:rotateY(-20deg) scale(1.05)}
+}
