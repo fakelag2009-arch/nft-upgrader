@@ -37,9 +37,37 @@
     <section class="page active" id="page-home">
       <div class="home-menu">
         <div class="home-menu-title">NFT Upgrader</div>
-        <button class="hm-btn hm-upgrade" onclick="switchPage('upgrade')"></button>
-        <button class="hm-btn hm-inventory" onclick="switchPage('inventory')"></button>
-        <button class="hm-btn hm-promo" onclick="showPromo()"></button>
+        <button class="hm-btn hm-upgrade" onclick="switchPage('upgrade')">
+          <div class="hm-left">
+            <div class="hm-title">&#1040;&#1055;&#1043;&#1056;&#1045;&#1049;&#1044;</div>
+            <div class="hm-tag hm-tag-green">&#1064;&#1040;&#1053;&#1057; &#1044;&#1054; 80%</div>
+          </div>
+          <div class="hm-right">
+            <svg class="hm-wheel-svg" viewBox="0 0 80 80" width="76" height="76">
+              <circle cx="40" cy="40" r="34" fill="#0a2210" stroke="rgba(0,230,118,0.4)" stroke-width="2"/>
+              <path d="M40 40L40 8A32 32 0 0 1 68 56Z" fill="#0e3a18" stroke="rgba(0,230,118,0.6)" stroke-width="1"/>
+              <path d="M40 40L68 56A32 32 0 1 1 40 8Z" fill="#2a0f10" stroke="rgba(255,71,87,0.4)" stroke-width="1"/>
+              <circle cx="40" cy="40" r="8" fill="#07070f" stroke="rgba(0,230,118,0.5)" stroke-width="1.5"/>
+              <polygon points="40,4 37,14 43,14" fill="white" opacity="0.9"/>
+            </svg>
+          </div>
+        </button>
+        <button class="hm-btn hm-inventory" onclick="switchPage('inventory')">
+          <div class="hm-left">
+            <div class="hm-title">&#1048;&#1053;&#1042;&#1045;&#1053;&#1058;&#1040;&#1056;&#1068;</div>
+          </div>
+          <div class="hm-right">
+            <div style="font-size:58px;animation:hmFloat 3s ease-in-out infinite;filter:drop-shadow(0 0 14px rgba(255,165,0,0.8))">&#127873;</div>
+          </div>
+        </button>
+        <button class="hm-btn hm-promo" onclick="showPromo()">
+          <div class="hm-left">
+            <div class="hm-title">&#1055;&#1056;&#1054;&#1052;&#1054;&#1050;&#1054;&#1044;</div>
+          </div>
+          <div class="hm-right">
+            <div style="font-size:58px;animation:hmFloat 3s ease-in-out infinite;animation-delay:1s;filter:drop-shadow(0 0 14px rgba(170,0,255,0.8))">&#127775;</div>
+          </div>
+        </button>
       </div>
     </section>
 
@@ -223,7 +251,7 @@
   </div>
 </div>
 
-<script>window.onerror=function(m,s,l,c,e){document.body.style.background="#000";document.body.innerHTML="<div style=color:#fff;padding:20px;font-size:12px>ERROR: "+m+"<br>Line:"+l+"</div>";return true};</script><script src="app.js"></script>
+<script src="app.js"></script>
 
 <!-- PROMO MODAL -->
 <div id="promoModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:2000;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closePromo()">
